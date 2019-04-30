@@ -7,6 +7,7 @@ import (
     "bytes"
 
     "github.com/HiroyukiNakatsuma/canon-go/internal"
+    "time"
 )
 
 type RoundTripFunc func(req *http.Request) *http.Response
@@ -15,30 +16,49 @@ func (f RoundTripFunc) RoundTrip(req *http.Request) (*http.Response, error) {
     return f(req), nil
 }
 
-func NewTestClient(fn RoundTripFunc) *http.Client {
+func NewTestClient(fn RoundTripFunc, respTime time.Duration) *http.Client {
     return &http.Client{
         Transport: RoundTripFunc(fn),
-    }
+        Timeout:   respTime}
+}
+
+func client(timeout time.Duration, resp *http.Response) *http.Client {
+    return NewTestClient(
+        func(req *http.Request) *http.Response {
+            if resp != nil {
+                return resp
+            }
+
+            return &http.Response{
+                StatusCode: http.StatusOK,
+                Body:       ioutil.NopCloser(bytes.NewBufferString(`OK`)),
+                Header:     make(http.Header)}
+        }, timeout)
 }
 
 func TestDoRequest(t *testing.T) {
-    body := `{"greet":"Hello World!"}`
-    httpMethod := "POST"
-    endpoint := "http://example.com/"
-    header1 := "content-type: application/json"
-    header2 := "Authorization: Bearer tokenExample"
-    var req = internal.Request{Method: httpMethod, Endpoint: endpoint, Body: body, Headers: internal.BuildHeader(header1, header2)}
+    cases := map[string]struct {
+        req    *internal.Request
+        client *http.Client
+    }{
+        "valid request": {
+            req:    &internal.Request{},
+            client: client(30*time.Second, nil),
+        },
+    }
 
-    client := NewTestClient(func(req *http.Request) *http.Response {
-        return &http.Response{
-            StatusCode: http.StatusOK,
-            Body:       ioutil.NopCloser(bytes.NewBufferString(`OK`)),
-            Header:     make(http.Header)}
-    })
+    for name, c := range cases {
+        t.Run(name, func(t *testing.T) {
+            api := internal.API{Req: c.req, Client: c.client}
+            res, err := api.DoRequest()
 
-    api := internal.API{Req: &req, Client: client}
-    res := api.DoRequest()
-    if res.StatusCode != http.StatusOK {
-        t.Errorf("api failed. response status: %d", res.StatusCode)
+            if err != nil {
+                t.Errorf("api raise error. err: %v", err)
+            }
+
+            if res.StatusCode != http.StatusOK {
+                t.Errorf("api failed. response status: %d", res.StatusCode)
+            }
+        })
     }
 }

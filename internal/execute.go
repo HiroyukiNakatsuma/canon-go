@@ -9,7 +9,10 @@ func Execute(req *Request) {
     log.Printf("req: %v", req)
 
     api := API{Req: req}
-    res := api.DoRequest()
+    res, err := api.DoRequest()
+    if err != nil {
+        log.Fatal(err)
+    }
 
     b, err := ioutil.ReadAll(res.Body)
     if err != nil {
