@@ -17,7 +17,7 @@ func getDefaultClient() *http.Client {
     return &http.Client{Timeout: 30 * time.Second}
 }
 
-func (api *API) Execute() string {
+func (api *API) DoRequest() string {
     log.Printf("Request: %v", *api.Req)
 
     if api.Client == nil {

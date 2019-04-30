@@ -2,10 +2,11 @@ package internal
 
 import (
     "testing"
-    "github.com/HiroyukiNakatsuma/canon-go/internal"
     "net/http"
     "io/ioutil"
     "bytes"
+
+    "github.com/HiroyukiNakatsuma/canon-go/internal"
 )
 
 type RoundTripFunc func(req *http.Request) *http.Response
@@ -20,7 +21,7 @@ func NewTestClient(fn RoundTripFunc) *http.Client {
     }
 }
 
-func TestExecute(t *testing.T) {
+func TestDoRequest(t *testing.T) {
     body := `{"greet":"Hello World!"}`
     httpMethod := "POST"
     endpoint := "http://example.com/"
@@ -36,7 +37,7 @@ func TestExecute(t *testing.T) {
     })
 
     api := internal.API{Req: &req, Client: client}
-    res := api.Execute()
+    res := api.DoRequest()
     if res != "OK" {
         t.Errorf("api failed. res: %s", res)
     }
