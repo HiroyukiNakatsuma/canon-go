@@ -5,9 +5,9 @@ import (
     "net/http"
     "io/ioutil"
     "bytes"
+    "time"
 
     "github.com/HiroyukiNakatsuma/canon-go/internal"
-    "time"
 )
 
 type RoundTripFunc func(req *http.Request) *http.Response
