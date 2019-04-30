@@ -1,6 +1,9 @@
 package internal
 
-import "log"
+import (
+    "log"
+    "io/ioutil"
+)
 
 func Execute(req *Request) {
     log.Printf("req: %v", req)
@@ -8,5 +11,11 @@ func Execute(req *Request) {
     api := API{Req: req}
     res := api.DoRequest()
 
-    log.Print(res)
+    b, err := ioutil.ReadAll(res.Body)
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    log.Printf("Response Status: %d", res.StatusCode)
+    log.Printf("Response Body: %s", b)
 }

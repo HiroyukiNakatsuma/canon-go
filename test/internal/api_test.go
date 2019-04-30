@@ -31,14 +31,14 @@ func TestDoRequest(t *testing.T) {
 
     client := NewTestClient(func(req *http.Request) *http.Response {
         return &http.Response{
-            StatusCode: 200,
+            StatusCode: http.StatusOK,
             Body:       ioutil.NopCloser(bytes.NewBufferString(`OK`)),
             Header:     make(http.Header)}
     })
 
     api := internal.API{Req: &req, Client: client}
     res := api.DoRequest()
-    if res != "OK" {
-        t.Errorf("api failed. res: %s", res)
+    if res.StatusCode != http.StatusOK {
+        t.Errorf("api failed. response status: %d", res.StatusCode)
     }
 }

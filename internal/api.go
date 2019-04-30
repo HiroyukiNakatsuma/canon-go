@@ -1,7 +1,6 @@
 package internal
 
 import (
-    "io/ioutil"
     "net/http"
     "bytes"
     "log"
@@ -17,7 +16,7 @@ func getDefaultClient() *http.Client {
     return &http.Client{Timeout: 30 * time.Second}
 }
 
-func (api *API) DoRequest() string {
+func (api *API) DoRequest() *http.Response {
     log.Printf("Request: %v", *api.Req)
 
     if api.Client == nil {
@@ -35,13 +34,5 @@ func (api *API) DoRequest() string {
     }
     defer res.Body.Close()
 
-    b, err := ioutil.ReadAll(res.Body)
-    if err != nil {
-        log.Fatal(err)
-    }
-
-    log.Printf("Response Status: %d", res.StatusCode)
-    log.Printf("Response Body: %s", b)
-
-    return "OK"
+    return res
 }
