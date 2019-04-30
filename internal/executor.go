@@ -27,7 +27,8 @@ func (e *Executor) Do() {
         log.Fatal(err)
     }
 
-    log.Printf("Response Status: %d", res.StatusCode)
-    log.Printf("Response Body: %s", b)
-    log.Printf("Response Time: %fs", time.Seconds())
+    var result = Result{StatusCode: res.StatusCode, Body: b, Time: time}
+    log.Printf("Response Status: %d", result.StatusCode)
+    log.Printf("Response Body: %s", result.Body)
+    log.Printf("Response Time: %fs", result.Time.Seconds())
 }
