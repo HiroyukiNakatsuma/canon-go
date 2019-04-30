@@ -24,8 +24,10 @@ func (api *API) DoRequest() (*http.Response, error) {
     }
 
     req, err := http.NewRequest(api.Req.Method, api.Req.Endpoint, bytes.NewBuffer([]byte(api.Req.Body)))
-    for k, v := range api.Req.Headers {
-        req.Header.Add(k, v)
+    for k, vs := range api.Req.Headers {
+        for _, v := range vs {
+            req.Header.Add(k, v)
+        }
     }
 
     res, err := api.Client.Do(req)

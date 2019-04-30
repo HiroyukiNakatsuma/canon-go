@@ -41,8 +41,40 @@ func TestDoRequest(t *testing.T) {
         req    *internal.Request
         client *http.Client
     }{
-        "valid request": {
-            req:    &internal.Request{},
+        "valid GET request": {
+            req: &internal.Request{
+                Method:   http.MethodGet,
+                Endpoint: `http://example.com?greet="Hello World!"`,
+                Body:     ``,
+                Headers:  internal.BuildHeader(`content-type: application/json`, `Authorization: Bearer tokenExample`),
+            },
+            client: client(30*time.Second, nil),
+        },
+        "valid POST request": {
+            req: &internal.Request{
+                Method:   http.MethodPost,
+                Endpoint: `http://example.com`,
+                Body:     `{"greet":"Hello World!"}`,
+                Headers:  internal.BuildHeader(`content-type: application/json`, `Authorization: Bearer tokenExample`),
+            },
+            client: client(30*time.Second, nil),
+        },
+        "valid PUT request": {
+            req: &internal.Request{
+                Method:   http.MethodPut,
+                Endpoint: `http://example.com`,
+                Body:     `{"greet":"Hello World!"}`,
+                Headers:  internal.BuildHeader(`content-type: application/json`, `Authorization: Bearer tokenExample`),
+            },
+            client: client(30*time.Second, nil),
+        },
+        "valid DELETE request": {
+            req: &internal.Request{
+                Method:   http.MethodDelete,
+                Endpoint: `http://example.com`,
+                Body:     `{"greet":"Hello World!"}`,
+                Headers:  internal.BuildHeader(`content-type: application/json`, `Authorization: Bearer tokenExample`),
+            },
             client: client(30*time.Second, nil),
         },
     }
