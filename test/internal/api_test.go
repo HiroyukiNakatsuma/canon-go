@@ -38,8 +38,10 @@ func client(timeout time.Duration, resp *http.Response) *http.Client {
 
 func TestDoRequest(t *testing.T) {
     cases := map[string]struct {
-        req    *internal.Request
-        client *http.Client
+        req                  *internal.Request
+        client               *http.Client
+        expectHasError       bool
+        expectedErrorMessage string
     }{
         "valid GET request": {
             req: &internal.Request{
@@ -48,7 +50,9 @@ func TestDoRequest(t *testing.T) {
                 Body:     ``,
                 Headers:  internal.BuildHeader(`content-type: application/json`, `Authorization: Bearer tokenExample`),
             },
-            client: client(30*time.Second, nil),
+            client:               client(30*time.Second, nil),
+            expectHasError:       false,
+            expectedErrorMessage: "",
         },
         "valid POST request": {
             req: &internal.Request{
@@ -57,7 +61,9 @@ func TestDoRequest(t *testing.T) {
                 Body:     `{"greet":"Hello World!"}`,
                 Headers:  internal.BuildHeader(`content-type: application/json`, `Authorization: Bearer tokenExample`),
             },
-            client: client(30*time.Second, nil),
+            client:               client(30*time.Second, nil),
+            expectHasError:       false,
+            expectedErrorMessage: "",
         },
         "valid PUT request": {
             req: &internal.Request{
@@ -66,7 +72,9 @@ func TestDoRequest(t *testing.T) {
                 Body:     `{"greet":"Hello World!"}`,
                 Headers:  internal.BuildHeader(`content-type: application/json`, `Authorization: Bearer tokenExample`),
             },
-            client: client(30*time.Second, nil),
+            client:               client(30*time.Second, nil),
+            expectHasError:       false,
+            expectedErrorMessage: "",
         },
         "valid DELETE request": {
             req: &internal.Request{
@@ -75,7 +83,9 @@ func TestDoRequest(t *testing.T) {
                 Body:     `{"greet":"Hello World!"}`,
                 Headers:  internal.BuildHeader(`content-type: application/json`, `Authorization: Bearer tokenExample`),
             },
-            client: client(30*time.Second, nil),
+            client:               client(30*time.Second, nil),
+            expectHasError:       false,
+            expectedErrorMessage: "",
         },
     }
 
@@ -84,8 +94,14 @@ func TestDoRequest(t *testing.T) {
             api := internal.API{Req: c.req, Client: c.client}
             res, err := api.DoRequest()
 
-            if err != nil {
-                t.Errorf("api raise error. err: %v", err)
+            if c.expectHasError {
+                if err == nil {
+                    t.Errorf("api not raise error.")
+                }
+
+                if err.Error() != c.expectedErrorMessage {
+                    t.Errorf("unexpected error message. expected: %s, actual: %s", c.expectedErrorMessage, err.Error())
+                }
             }
 
             if res.StatusCode != http.StatusOK {
