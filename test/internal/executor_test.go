@@ -31,11 +31,56 @@ func NewTestExecutor(req *internal.Request) *internal.Executor {
 }
 
 func TestDo(t *testing.T) {
-    body := `{"greet":"Hello World!"}`
-    httpMethod := "POST"
-    endpoint := "http://example.com/"
-    header1 := "content-type: application/json"
-    header2 := "Authorization: Bearer tokenExample"
-    var req = internal.Request{Method: httpMethod, Endpoint: endpoint, Body: body, Headers: internal.BuildHeader(header1, header2)}
-    NewTestExecutor(&req).Do()
+    cases := map[string]struct {
+        req                  *internal.Request
+        expectHasError       bool
+        expectedErrorMessage string
+    }{
+        "valid GET request": {
+            req: &internal.Request{
+                Method:   http.MethodGet,
+                Endpoint: `http://example.com?greet="Hello World!"`,
+                Body:     ``,
+                Headers:  internal.BuildHeader(`content-type: application/json`, `Authorization: Bearer tokenExample`),
+            },
+            expectHasError:       false,
+            expectedErrorMessage: "",
+        },
+        "valid POST request": {
+            req: &internal.Request{
+                Method:   http.MethodPost,
+                Endpoint: `http://example.com`,
+                Body:     `{"greet":"Hello World!"}`,
+                Headers:  internal.BuildHeader(`content-type: application/json`, `Authorization: Bearer tokenExample`),
+            },
+            expectHasError:       false,
+            expectedErrorMessage: "",
+        },
+        "valid PUT request": {
+            req: &internal.Request{
+                Method:   http.MethodPut,
+                Endpoint: `http://example.com`,
+                Body:     `{"greet":"Hello World!"}`,
+                Headers:  internal.BuildHeader(`content-type: application/json`, `Authorization: Bearer tokenExample`),
+            },
+            expectHasError:       false,
+            expectedErrorMessage: "",
+        },
+        "valid DELETE request": {
+            req: &internal.Request{
+                Method:   http.MethodDelete,
+                Endpoint: `http://example.com`,
+                Body:     `{"greet":"Hello World!"}`,
+                Headers:  internal.BuildHeader(`content-type: application/json`, `Authorization: Bearer tokenExample`),
+            },
+            expectHasError:       false,
+            expectedErrorMessage: "",
+        },
+    }
+
+    for name, c := range cases {
+        t.Run(name, func(t *testing.T) {
+            NewTestExecutor(c.req).Do()
+        })
+    }
 }
