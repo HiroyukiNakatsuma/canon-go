@@ -9,5 +9,5 @@ func main() {
     header1 := "content-type: application/json"
     header2 := "Authorization: Bearer tokenExample"
     var req = internal.Request{Method: httpMethod, Endpoint: endpoint, Body: body, Headers: internal.BuildHeader(header1, header2)}
-    internal.Execute(&req)
+    internal.NewExecutor(&req).Do()
 }

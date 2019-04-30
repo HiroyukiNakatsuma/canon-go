@@ -5,11 +5,19 @@ import (
     "io/ioutil"
 )
 
-func Execute(req *Request) {
-    log.Printf("req: %v", req)
+type Executor struct {
+    Req *Request
+    Api API
+}
 
-    api := NewApi(req, nil)
-    res, err := api.DoRequest()
+func NewExecutor(req *Request) *Executor {
+    return &Executor{Req: req, Api: NewApi(req, nil)}
+}
+
+func (e *Executor) Do() {
+    log.Printf("req: %v", e.Req)
+
+    res, err := e.Api.DoRequest()
     if err != nil {
         log.Fatal(err)
     }
