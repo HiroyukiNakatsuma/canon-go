@@ -5,6 +5,7 @@ import (
     "net/http"
     "bytes"
     "io/ioutil"
+    "time"
 
     "github.com/HiroyukiNakatsuma/canon-go/internal"
 )
@@ -18,11 +19,12 @@ func NewApiMock() *ApiMock {
     return &ApiMock{}
 }
 
-func (api *ApiMock) DoRequest() (*http.Response, error) {
+func (api *ApiMock) DoRequest() (*http.Response, time.Duration, error) {
     return &http.Response{
         StatusCode: http.StatusOK,
         Body:       ioutil.NopCloser(bytes.NewBufferString(`OK`)),
         Header:     make(http.Header)},
+        100 * time.Millisecond,
         nil
 }
 

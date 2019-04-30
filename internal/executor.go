@@ -17,7 +17,7 @@ func NewExecutor(req *Request) *Executor {
 func (e *Executor) Do() {
     log.Printf("req: %v", e.Req)
 
-    res, err := e.Api.DoRequest()
+    res, time, err := e.Api.DoRequest()
     if err != nil {
         log.Fatal(err)
     }
@@ -29,4 +29,5 @@ func (e *Executor) Do() {
 
     log.Printf("Response Status: %d", res.StatusCode)
     log.Printf("Response Body: %s", b)
+    log.Printf("Response Time: %fs", time.Seconds())
 }

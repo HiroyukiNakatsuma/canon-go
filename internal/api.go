@@ -8,7 +8,7 @@ import (
 )
 
 type API interface {
-    DoRequest() (*http.Response, error)
+    DoRequest() (*http.Response, time.Duration, error)
 }
 
 type Api struct {
@@ -24,7 +24,7 @@ func getDefaultClient() *http.Client {
     return &http.Client{Timeout: 30 * time.Second}
 }
 
-func (api *Api) DoRequest() (*http.Response, error) {
+func (api *Api) DoRequest() (*http.Response, time.Duration, error) {
     log.Printf("Request: %v", *api.Req)
 
     if api.Client == nil {
@@ -38,11 +38,16 @@ func (api *Api) DoRequest() (*http.Response, error) {
         }
     }
 
+    start := time.Now()
+
     res, err := api.Client.Do(req)
+    defer res.Body.Close()
+
+    duration := time.Now().Sub(start)
+
     if err != nil {
         log.Fatal(err)
     }
-    defer res.Body.Close()
 
-    return res, err
+    return res, duration, err
 }
