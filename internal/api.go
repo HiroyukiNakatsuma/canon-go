@@ -7,16 +7,24 @@ import (
     "time"
 )
 
-type API struct {
+type API interface {
+    DoRequest() (*http.Response, error)
+}
+
+type Api struct {
     Req    *Request
     Client *http.Client
+}
+
+func NewApi(req *Request, client *http.Client) *Api {
+    return &Api{Req: req, Client: client}
 }
 
 func getDefaultClient() *http.Client {
     return &http.Client{Timeout: 30 * time.Second}
 }
 
-func (api *API) DoRequest() (*http.Response, error) {
+func (api *Api) DoRequest() (*http.Response, error) {
     log.Printf("Request: %v", *api.Req)
 
     if api.Client == nil {

@@ -91,7 +91,7 @@ func TestDoRequest(t *testing.T) {
 
     for name, c := range cases {
         t.Run(name, func(t *testing.T) {
-            api := internal.API{Req: c.req, Client: c.client}
+            api := internal.NewApi(c.req, c.client)
             res, err := api.DoRequest()
 
             if c.expectHasError {

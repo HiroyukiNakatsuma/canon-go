@@ -8,7 +8,7 @@ import (
 func Execute(req *Request) {
     log.Printf("req: %v", req)
 
-    api := API{Req: req}
+    api := NewApi(req, nil)
     res, err := api.DoRequest()
     if err != nil {
         log.Fatal(err)
