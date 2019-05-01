@@ -6,29 +6,34 @@ import (
 )
 
 type Executor struct {
-    Req *Request
-    Api API
+    Apis []API
 }
 
-func NewExecutor(req *Request) *Executor {
-    return &Executor{Req: req, Api: NewApi(req, nil)}
+func NewExecutor(reqs ...*Request) *Executor {
+    var apis []API
+    for _, req := range reqs {
+        apis = append(apis, NewApi(req, nil))
+    }
+    return &Executor{Apis: apis}
 }
 
 func (e *Executor) Do() {
-    log.Printf("req: %v", e.Req)
+    for _, api := range e.Apis {
+        log.Printf("req: %v", api)
 
-    res, time, err := e.Api.DoRequest()
-    if err != nil {
-        log.Fatal(err)
+        res, time, err := api.DoRequest()
+        if err != nil {
+            log.Fatal(err)
+        }
+
+        b, err := ioutil.ReadAll(res.Body)
+        if err != nil {
+            log.Fatal(err)
+        }
+
+        var result = Result{StatusCode: res.StatusCode, Body: b, Time: time}
+        log.Printf("Response Status: %d", result.StatusCode)
+        log.Printf("Response Body: %s", result.Body)
+        log.Printf("Response Time: %fs", result.Time.Seconds())
     }
-
-    b, err := ioutil.ReadAll(res.Body)
-    if err != nil {
-        log.Fatal(err)
-    }
-
-    var result = Result{StatusCode: res.StatusCode, Body: b, Time: time}
-    log.Printf("Response Status: %d", result.StatusCode)
-    log.Printf("Response Body: %s", result.Body)
-    log.Printf("Response Time: %fs", result.Time.Seconds())
 }
