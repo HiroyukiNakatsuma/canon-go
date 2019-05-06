@@ -10,7 +10,7 @@ func NewExecutor(actions []Action) *Executor {
     return &Executor{Actions: actions}
 }
 
-func (e *Executor) Do() {
+func (e *Executor) Execute() {
     for _, action := range e.Actions {
         log.Printf("req: %v", action)
 

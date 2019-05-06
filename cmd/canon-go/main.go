@@ -18,5 +18,5 @@ func main() {
         Timeout:  30,
     }
     actions = append(actions, req)
-    internal.NewExecutor(actions).Do()
+    internal.NewExecutor(actions).Execute()
 }
