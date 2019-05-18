@@ -3,6 +3,10 @@ package internal
 import (
     "strings"
     "net/http"
+    "time"
+    "bytes"
+    "log"
+    "io/ioutil"
 )
 
 /**
@@ -19,6 +23,8 @@ type Request struct {
     Endpoint string
     Body     string
     Headers  map[string][]string
+    Timeout  time.Duration
+    Api      API
 }
 
 func BuildHeader(headers ...string) map[string][]string {
@@ -29,4 +35,33 @@ func BuildHeader(headers ...string) map[string][]string {
         headersMap[k] = strings.Split(strings.TrimSpace(v), ",")
     }
     return headersMap
+}
+
+func getClient(timeout time.Duration) *http.Client {
+    return &http.Client{Timeout: timeout * time.Second}
+}
+
+func (req *Request) Do() *Result {
+    request, err := http.NewRequest(req.Method, req.Endpoint, bytes.NewBuffer([]byte(req.Body)))
+    if err != nil {
+        log.Fatal(err)
+    }
+    for k, vs := range req.Headers {
+        for _, v := range vs {
+            request.Header.Add(k, v)
+        }
+    }
+
+    api := NewApi(request, getClient(req.Timeout))
+    res, execTime, err := api.DoRequest()
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    b, err := ioutil.ReadAll(res.Body)
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    return &Result{StatusCode: res.StatusCode, Body: b, Time: execTime}
 }

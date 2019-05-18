@@ -19,7 +19,8 @@ func (f RoundTripFunc) RoundTrip(req *http.Request) (*http.Response, error) {
 func NewTestClient(fn RoundTripFunc, respTime time.Duration) *http.Client {
     return &http.Client{
         Transport: RoundTripFunc(fn),
-        Timeout:   respTime}
+        Timeout:   respTime,
+    }
 }
 
 func client(timeout time.Duration, resp *http.Response) *http.Client {
@@ -36,53 +37,64 @@ func client(timeout time.Duration, resp *http.Response) *http.Client {
         }, timeout)
 }
 
+func NewTestRequest(method, endpoint, body string, headers ...string) *http.Request {
+    request, _ := http.NewRequest(method, endpoint, bytes.NewBuffer([]byte(body)))
+    hs := internal.BuildHeader(headers...)
+    for k, vs := range hs {
+        for _, v := range vs {
+            request.Header.Add(k, v)
+        }
+    }
+    return request
+}
+
 func TestDoRequest(t *testing.T) {
     cases := map[string]struct {
-        req                  *internal.Request
+        req                  *http.Request
         client               *http.Client
         expectHasError       bool
         expectedErrorMessage string
     }{
         "valid GET request": {
-            req: &internal.Request{
-                Method:   http.MethodGet,
-                Endpoint: `http://example.com?greet="Hello World!"`,
-                Body:     ``,
-                Headers:  internal.BuildHeader(`content-type: application/json`, `Authorization: Bearer tokenExample`),
-            },
+            req: NewTestRequest(
+                http.MethodGet,
+                `http://example.com?greet="Hello World!"`,
+                ``,
+                `content-type: application/json`,
+                `Authorization: Bearer tokenExample`),
             client:               client(30*time.Second, nil),
             expectHasError:       false,
             expectedErrorMessage: "",
         },
         "valid POST request": {
-            req: &internal.Request{
-                Method:   http.MethodPost,
-                Endpoint: `http://example.com`,
-                Body:     `{"greet":"Hello World!"}`,
-                Headers:  internal.BuildHeader(`content-type: application/json`, `Authorization: Bearer tokenExample`),
-            },
+            req: NewTestRequest(
+                http.MethodPost,
+                `http://example.com`,
+                `{"greet":"Hello World!"}`,
+                `content-type: application/json`,
+                `Authorization: Bearer tokenExample`),
             client:               client(30*time.Second, nil),
             expectHasError:       false,
             expectedErrorMessage: "",
         },
         "valid PUT request": {
-            req: &internal.Request{
-                Method:   http.MethodPut,
-                Endpoint: `http://example.com`,
-                Body:     `{"greet":"Hello World!"}`,
-                Headers:  internal.BuildHeader(`content-type: application/json`, `Authorization: Bearer tokenExample`),
-            },
+            req: NewTestRequest(
+                http.MethodPut,
+                `http://example.com`,
+                `{"greet":"Hello World!"}`,
+                `content-type: application/json`,
+                `Authorization: Bearer tokenExample`),
             client:               client(30*time.Second, nil),
             expectHasError:       false,
             expectedErrorMessage: "",
         },
         "valid DELETE request": {
-            req: &internal.Request{
-                Method:   http.MethodDelete,
-                Endpoint: `http://example.com`,
-                Body:     `{"greet":"Hello World!"}`,
-                Headers:  internal.BuildHeader(`content-type: application/json`, `Authorization: Bearer tokenExample`),
-            },
+            req: NewTestRequest(
+                http.MethodDelete,
+                `http://example.com`,
+                `{"greet":"Hello World!"}`,
+                `content-type: application/json`,
+                `Authorization: Bearer tokenExample`),
             client:               client(30*time.Second, nil),
             expectHasError:       false,
             expectedErrorMessage: "",

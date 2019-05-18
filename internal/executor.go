@@ -1,34 +1,23 @@
 package internal
 
-import (
-    "log"
-    "io/ioutil"
-)
+import "log"
 
 type Executor struct {
-    Req *Request
-    Api API
+    Actions []Action
 }
 
-func NewExecutor(req *Request) *Executor {
-    return &Executor{Req: req, Api: NewApi(req, nil)}
+func NewExecutor(actions []Action) *Executor {
+    return &Executor{Actions: actions}
 }
 
-func (e *Executor) Do() {
-    log.Printf("req: %v", e.Req)
+func (e *Executor) Execute() {
+    for _, action := range e.Actions {
+        log.Printf("req: %v", action)
 
-    res, time, err := e.Api.DoRequest()
-    if err != nil {
-        log.Fatal(err)
+        result := action.Do()
+
+        log.Printf("Response Status: %d", result.StatusCode)
+        log.Printf("Response Body: %s", result.Body)
+        log.Printf("Response Time: %fs", result.Time.Seconds())
     }
-
-    b, err := ioutil.ReadAll(res.Body)
-    if err != nil {
-        log.Fatal(err)
-    }
-
-    var result = Result{StatusCode: res.StatusCode, Body: b, Time: time}
-    log.Printf("Response Status: %d", result.StatusCode)
-    log.Printf("Response Body: %s", result.Body)
-    log.Printf("Response Time: %fs", result.Time.Seconds())
 }
