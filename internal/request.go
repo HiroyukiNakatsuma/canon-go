@@ -24,6 +24,7 @@ type Request struct {
     Body     string
     Headers  map[string][]string
     Timeout  time.Duration
+    Api      API
 }
 
 func BuildHeader(headers ...string) map[string][]string {
