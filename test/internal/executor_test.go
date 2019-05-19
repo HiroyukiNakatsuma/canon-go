@@ -5,79 +5,122 @@ import (
     "net/http"
 
     "github.com/HiroyukiNakatsuma/canon-go/internal"
+    "github.com/HiroyukiNakatsuma/canon-go/test/mock"
 )
 
-func NewTestExecutor(actions []internal.Action) *internal.Executor {
-    return &internal.Executor{Actions: actions}
+type YamlLoaderMock struct {
+    actions []internal.Action
 }
 
-func requests2Actions(reqs []*internal.Request) []internal.Action {
-    actions := make([]internal.Action, len(reqs))
-    for i, req := range reqs {
-        actions[i] = req
-    }
-    return actions
+func NewYamlLoaderMock(actions ...internal.Action) *YamlLoaderMock {
+    return &YamlLoaderMock{actions: actions}
+}
+
+func (yamlLoader *YamlLoaderMock) LoadConfig() *internal.ActionConfig {
+    return &internal.ActionConfig{Threads: 1, Loop: 1}
+}
+
+func (yamlLoader *YamlLoaderMock) LoadActions() []internal.Action {
+    return yamlLoader.actions
 }
 
 func TestExecute(t *testing.T) {
     cases := map[string]struct {
-        actions              []internal.Action
+        dataInput            internal.DataInput
+        summarizer           internal.Summarizer
         expectHasError       bool
         expectedErrorMessage string
     }{
         "valid requests": {
-            actions: requests2Actions([]*internal.Request{
-                {
-                    Method:   http.MethodGet,
-                    Endpoint: `http://example.com?greet="Hello World!"`,
-                    Body:     ``,
-                },
-                {
-                    Method:   http.MethodPost,
-                    Endpoint: `http://example.com`,
-                    Body:     `{"greet":"Hello World!"}`,
-                },
-                {
-                    Method:   http.MethodPut,
-                    Endpoint: `http://example.com`,
-                    Body:     `{"greet":"Hello World!"}`,
-                },
-                {
-                    Method:   http.MethodDelete,
-                    Endpoint: `http://example.com`,
-                    Body:     `{"greet":"Hello World!"}`,
-                },
-            }),
+            dataInput: NewYamlLoaderMock(
+                internal.NewRequest(
+                    http.MethodGet,
+                    `http://example.com?greet="Hello World!"`,
+                    ``,
+                    nil,
+                    mock.NewMockClient(30, nil)),
+                internal.NewRequest(
+                    http.MethodPost,
+                    `http://example.com`,
+                    `{"greet":"Hello World!"}`,
+                    nil,
+                    mock.NewMockClient(30, nil)),
+                internal.NewRequest(
+                    http.MethodPut,
+                    `http://example.com`,
+                    `{"greet":"Hello World!"}`,
+                    nil,
+                    mock.NewMockClient(30, nil)),
+                internal.NewRequest(
+                    http.MethodDelete,
+                    `http://example.com`,
+                    `{"greet":"Hello World!"}`,
+                    nil,
+                    mock.NewMockClient(30, nil)),
+            ),
             expectHasError:       false,
             expectedErrorMessage: "",
         },
         "valid requests with headers": {
-            actions: requests2Actions([]*internal.Request{
-                {
-                    Method:   http.MethodGet,
-                    Endpoint: `http://example.com?greet="Hello World!"`,
-                    Body:     ``,
-                    Headers:  internal.BuildHeader(`content-type: application/json`, `Authorization: Bearer tokenExample`),
-                },
-                {
-                    Method:   http.MethodPost,
-                    Endpoint: `http://example.com`,
-                    Body:     `{"greet":"Hello World!"}`,
-                    Headers:  internal.BuildHeader(`content-type: application/json`, `Authorization: Bearer tokenExample`),
-                },
-                {
-                    Method:   http.MethodPut,
-                    Endpoint: `http://example.com`,
-                    Body:     `{"greet":"Hello World!"}`,
-                    Headers:  internal.BuildHeader(`content-type: application/json`, `Authorization: Bearer tokenExample`),
-                },
-                {
-                    Method:   http.MethodDelete,
-                    Endpoint: `http://example.com`,
-                    Body:     `{"greet":"Hello World!"}`,
-                    Headers:  internal.BuildHeader(`content-type: application/json`, `Authorization: Bearer tokenExample`),
-                },
-            }),
+            dataInput: NewYamlLoaderMock(
+                internal.NewRequest(
+                    http.MethodGet,
+                    `http://example.com?greet="Hello World!"`,
+                    ``,
+                    internal.BuildHeader(`content-type: application/json`, `Authorization: Bearer tokenExample`),
+                    mock.NewMockClient(30, nil)),
+                internal.NewRequest(
+                    http.MethodPost,
+                    `http://example.com`,
+                    `{"greet":"Hello World!"}`,
+                    internal.BuildHeader(`content-type: application/json`, `Authorization: Bearer tokenExample`),
+                    mock.NewMockClient(30, nil)),
+                internal.NewRequest(
+                    http.MethodPut,
+                    `http://example.com`,
+                    `{"greet":"Hello World!"}`,
+                    internal.BuildHeader(`content-type: application/json`, `Authorization: Bearer tokenExample`),
+                    mock.NewMockClient(30, nil)),
+                internal.NewRequest(
+                    http.MethodDelete,
+                    `http://example.com`,
+                    `{"greet":"Hello World!"}`,
+                    internal.BuildHeader(`content-type: application/json`, `Authorization: Bearer tokenExample`),
+                    mock.NewMockClient(30, nil)),
+            ),
+            expectHasError:       false,
+            expectedErrorMessage: "",
+        },
+        "valid requests with sleep": {
+            dataInput: NewYamlLoaderMock(
+                internal.NewRequest(
+                    http.MethodGet,
+                    `http://example.com?greet="Hello World!"`,
+                    ``,
+                    internal.BuildHeader(`content-type: application/json`, `Authorization: Bearer tokenExample`),
+                    mock.NewMockClient(30, nil)),
+                internal.NewSleep(5),
+                internal.NewRequest(
+                    http.MethodPost,
+                    `http://example.com`,
+                    `{"greet":"Hello World!"}`,
+                    internal.BuildHeader(`content-type: application/json`, `Authorization: Bearer tokenExample`),
+                    mock.NewMockClient(30, nil)),
+                internal.NewSleep(5),
+                internal.NewRequest(
+                    http.MethodPut,
+                    `http://example.com`,
+                    `{"greet":"Hello World!"}`,
+                    internal.BuildHeader(`content-type: application/json`, `Authorization: Bearer tokenExample`),
+                    mock.NewMockClient(30, nil)),
+                internal.NewSleep(5),
+                internal.NewRequest(
+                    http.MethodDelete,
+                    `http://example.com`,
+                    `{"greet":"Hello World!"}`,
+                    internal.BuildHeader(`content-type: application/json`, `Authorization: Bearer tokenExample`),
+                    mock.NewMockClient(30, nil)),
+            ),
             expectHasError:       false,
             expectedErrorMessage: "",
         },
@@ -85,7 +128,8 @@ func TestExecute(t *testing.T) {
 
     for name, c := range cases {
         t.Run(name, func(t *testing.T) {
-            NewTestExecutor(c.actions).Execute()
+            executor := internal.NewExecutor(c.dataInput, c.summarizer)
+            executor.Execute()
         })
     }
 }

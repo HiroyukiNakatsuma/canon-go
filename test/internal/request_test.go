@@ -3,39 +3,10 @@ package internal
 import (
     "testing"
     "net/http"
-    "time"
-    "io/ioutil"
-    "bytes"
 
     "github.com/HiroyukiNakatsuma/canon-go/internal"
+    "github.com/HiroyukiNakatsuma/canon-go/test/mock"
 )
-
-type RoundTripFunc func(req *http.Request) *http.Response
-
-func (f RoundTripFunc) RoundTrip(req *http.Request) (*http.Response, error) {
-    return f(req), nil
-}
-
-func client(fn RoundTripFunc, respTime time.Duration) *http.Client {
-    return &http.Client{
-        Transport: RoundTripFunc(fn),
-        Timeout:   respTime,
-    }
-}
-
-func NewMockClient(timeout time.Duration, resp *http.Response) *http.Client {
-    return client(
-        func(req *http.Request) *http.Response {
-            if resp != nil {
-                return resp
-            }
-
-            return &http.Response{
-                StatusCode: http.StatusOK,
-                Body:       ioutil.NopCloser(bytes.NewBufferString(`OK`)),
-                Header:     make(http.Header)}
-        }, timeout)
-}
 
 func TestDo(t *testing.T) {
     cases := map[string]struct {
@@ -49,7 +20,7 @@ func TestDo(t *testing.T) {
                 `http://example.com?greet="Hello World!"`,
                 ``,
                 internal.BuildHeader(`content-type: application/json`, `Authorization: Bearer tokenExample`),
-                NewMockClient(30, nil)),
+                mock.NewMockClient(30, nil)),
             expectHasError:       false,
             expectedErrorMessage: "",
         },
@@ -59,7 +30,7 @@ func TestDo(t *testing.T) {
                 `http://example.com`,
                 `{"greet":"Hello World!"}`,
                 internal.BuildHeader(`content-type: application/json`, `Authorization: Bearer tokenExample`),
-                NewMockClient(30, nil)),
+                mock.NewMockClient(30, nil)),
             expectHasError:       false,
             expectedErrorMessage: "",
         },
@@ -69,7 +40,7 @@ func TestDo(t *testing.T) {
                 `http://example.com`,
                 `{"greet":"Hello World!"}`,
                 internal.BuildHeader(`content-type: application/json`, `Authorization: Bearer tokenExample`),
-                NewMockClient(30, nil)),
+                mock.NewMockClient(30, nil)),
             expectHasError:       false,
             expectedErrorMessage: "",
         },
@@ -79,7 +50,7 @@ func TestDo(t *testing.T) {
                 `http://example.com`,
                 `{"greet":"Hello World!"}`,
                 internal.BuildHeader(`content-type: application/json`, `Authorization: Bearer tokenExample`),
-                NewMockClient(30, nil)),
+                mock.NewMockClient(30, nil)),
             expectHasError:       false,
             expectedErrorMessage: "",
         },
