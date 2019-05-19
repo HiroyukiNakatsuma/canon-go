@@ -3,15 +3,17 @@ package internal
 import "log"
 
 type Executor struct {
-    Actions []Action
+    dataInput  DataInput
+    summarizer Summarizer
 }
 
-func NewExecutor(actions []Action) *Executor {
-    return &Executor{Actions: actions}
+func NewExecutor(dataInput DataInput, summarizer Summarizer) *Executor {
+    return &Executor{dataInput: dataInput, summarizer: summarizer}
 }
 
 func (e *Executor) Execute() {
-    for _, action := range e.Actions {
+    actions := e.dataInput.LoadActions()
+    for _, action := range actions {
         log.Printf("req: %v", action)
 
         result := action.Do()
