@@ -1,26 +1,67 @@
 package internal
 
 import (
+    "testing"
     "net/http"
-    "time"
-    "io/ioutil"
-    "bytes"
+
+    "github.com/HiroyukiNakatsuma/canon-go/internal"
+    "github.com/HiroyukiNakatsuma/canon-go/test/mock"
 )
 
-type ApiMock struct {
-    Req    *http.Request
-    Client *http.Client
-}
+func TestDo(t *testing.T) {
+    cases := map[string]struct {
+        Request              *internal.Request
+        expectHasError       bool
+        expectedErrorMessage string
+    }{
+        "valid GET Request": {
+            Request: internal.NewRequest(
+                http.MethodGet,
+                `http://example.com?greet="Hello World!"`,
+                ``,
+                internal.BuildHeader(`content-type: application/json`, `Authorization: Bearer tokenExample`),
+                mock.NewMockClient(30, nil)),
+            expectHasError:       false,
+            expectedErrorMessage: "",
+        },
+        "valid POST request": {
+            Request: internal.NewRequest(
+                http.MethodPost,
+                `http://example.com`,
+                `{"greet":"Hello World!"}`,
+                internal.BuildHeader(`content-type: application/json`, `Authorization: Bearer tokenExample`),
+                mock.NewMockClient(30, nil)),
+            expectHasError:       false,
+            expectedErrorMessage: "",
+        },
+        "valid PUT request": {
+            Request: internal.NewRequest(
+                http.MethodPut,
+                `http://example.com`,
+                `{"greet":"Hello World!"}`,
+                internal.BuildHeader(`content-type: application/json`, `Authorization: Bearer tokenExample`),
+                mock.NewMockClient(30, nil)),
+            expectHasError:       false,
+            expectedErrorMessage: "",
+        },
+        "valid DELETE request": {
+            Request: internal.NewRequest(
+                http.MethodDelete,
+                `http://example.com`,
+                `{"greet":"Hello World!"}`,
+                internal.BuildHeader(`content-type: application/json`, `Authorization: Bearer tokenExample`),
+                mock.NewMockClient(30, nil)),
+            expectHasError:       false,
+            expectedErrorMessage: "",
+        },
+    }
 
-func NewApiMock(req *http.Request, client *http.Client) *ApiMock {
-    return &ApiMock{Req: req, Client: client}
-}
-
-func (api *ApiMock) DoRequest() (*http.Response, time.Duration, error) {
-    return &http.Response{
-        StatusCode: http.StatusOK,
-        Body:       ioutil.NopCloser(bytes.NewBufferString(`OK`)),
-        Header:     make(http.Header)},
-        100 * time.Millisecond,
-        nil
+    for name, c := range cases {
+        t.Run(name, func(t *testing.T) {
+            result := c.Request.Do()
+            if result.StatusCode != http.StatusOK {
+                t.Errorf("api failed. response status: %d", result.StatusCode)
+            }
+        })
+    }
 }

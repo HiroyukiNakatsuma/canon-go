@@ -1,7 +1,6 @@
 package internal
 
 import (
-    "strings"
     "net/http"
     "time"
     "bytes"
@@ -9,36 +8,22 @@ import (
     "io/ioutil"
 )
 
-/**
-Multiple headers define like this:
-Accept: application/json,text/csv,application/xml
-
-not like this:
-Accept: application/json
-Accept: text/csv
-Accept: application/xml
-*/
 type Request struct {
     Method   string
     Endpoint string
     Body     string
     Headers  map[string][]string
-    Timeout  time.Duration
-    Api      API
+    Client   *http.Client
 }
 
-func BuildHeader(headers ...string) map[string][]string {
-    headersMap := make(http.Header)
-    for _, h := range headers {
-        h := strings.Split(h, ":")
-        k, v := strings.TrimSpace(h[0]), strings.TrimSpace(h[1])
-        headersMap[k] = strings.Split(strings.TrimSpace(v), ",")
+func NewRequest(method string, endpoint string, body string, headers map[string][]string, client *http.Client) *Request {
+    return &Request{
+        Method:   method,
+        Endpoint: endpoint,
+        Body:     body,
+        Headers:  headers,
+        Client:   client,
     }
-    return headersMap
-}
-
-func getClient(timeout time.Duration) *http.Client {
-    return &http.Client{Timeout: timeout * time.Second}
 }
 
 func (req *Request) Do() *Result {
@@ -52,8 +37,15 @@ func (req *Request) Do() *Result {
         }
     }
 
-    api := NewApi(request, getClient(req.Timeout))
-    res, execTime, err := api.DoRequest()
+    log.Printf("Request: %v", request)
+
+    start := time.Now()
+
+    res, err := req.Client.Do(request)
+    defer res.Body.Close()
+
+    execTime := time.Now().Sub(start)
+
     if err != nil {
         log.Fatal(err)
     }
@@ -63,5 +55,5 @@ func (req *Request) Do() *Result {
         log.Fatal(err)
     }
 
-    return &Result{StatusCode: res.StatusCode, Body: b, Time: execTime}
+    return &Result{Request: req, StatusCode: res.StatusCode, Body: b, Time: execTime}
 }
