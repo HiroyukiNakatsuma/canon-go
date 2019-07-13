@@ -55,5 +55,5 @@ func (req *Request) Do() *Result {
         log.Fatal(err)
     }
 
-    return &Result{Request: req, StatusCode: res.StatusCode, Body: b, Time: execTime}
+    return &Result{Request: req, StatusCode: res.StatusCode, ResponseBody: b, Time: execTime}
 }

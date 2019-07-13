@@ -23,7 +23,7 @@ func (e *Executor) Execute() {
             continue
         }
         log.Printf("Response Status: %d", result.StatusCode)
-        log.Printf("Response Body: %s", result.Body)
+        log.Printf("Response Body: %s", result.ResponseBody)
         log.Printf("Response Time: %fs", result.Time.Seconds())
     }
 }
