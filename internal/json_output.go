@@ -6,6 +6,5 @@ func NewJsonOutput() *jsonOutput {
     return &jsonOutput{}
 }
 
-func (output *jsonOutput) OutputSummary(summary *Summary) error {
-    return nil
+func (output *jsonOutput) OutputSummary(summary *Summary) {
 }
