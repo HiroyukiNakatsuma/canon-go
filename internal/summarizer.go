@@ -1,7 +1,7 @@
 package internal
 
 type Summarizer interface {
-    Summarize(results []*Result) *Summary
+    Summarize(results []Action) *Summary
 }
 
 type summarizer struct{}
@@ -10,6 +10,6 @@ func NewSummarizer() *summarizer {
     return &summarizer{}
 }
 
-func (summarizer *summarizer) Summarize(results []*Result) *Summary {
+func (summarizer *summarizer) Summarize(results []Action) *Summary {
     return &Summary{}
 }

@@ -14,7 +14,6 @@ func NewExecutor(dataInput DataInput, summarizer Summarizer, dataOutput DataOutp
 
 func (e *Executor) Execute() {
     actions := e.dataInput.LoadActions()
-    var results []*Result
     for _, action := range actions {
         log.Printf("req: %v", action)
 
@@ -27,11 +26,9 @@ func (e *Executor) Execute() {
         log.Printf("Response Status: %d", result.StatusCode)
         log.Printf("Response Body: %s", result.ResponseBody)
         log.Printf("Response Time: %fs", result.ResponseTime.Seconds())
-
-        results = append(results, result)
     }
 
-    summary := e.summarizer.Summarize(results)
+    summary := e.summarizer.Summarize(actions)
 
     e.dataOutput.OutputSummary(summary)
 }
