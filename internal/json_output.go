@@ -1,10 +1,11 @@
 package internal
 
-type JsonOutput struct{}
+type jsonOutput struct{}
 
-func NewJsonOutput() *JsonOutput {
-    return &JsonOutput{}
+func NewJsonOutput() *jsonOutput {
+    return &jsonOutput{}
 }
 
-func (output *JsonOutput) OutputSummary(summary *Summary) {
+func (output *jsonOutput) OutputSummary(summary *Summary) error {
+    return nil
 }
