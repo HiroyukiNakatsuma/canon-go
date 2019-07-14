@@ -6,17 +6,17 @@ import (
     "time"
 )
 
-type YamlLoader struct{}
+type yamlLoader struct{}
 
-func NewYamlLoader() *YamlLoader {
-    return &YamlLoader{}
+func NewYamlLoader() *yamlLoader {
+    return &yamlLoader{}
 }
 
-func (yamlLoader *YamlLoader) LoadConfig() *ActionConfig {
+func (yamlLoader *yamlLoader) LoadConfig() *ActionConfig {
     return &ActionConfig{Threads: 1, Loop: 1}
 }
 
-func (yamlLoader *YamlLoader) LoadActions() []Action {
+func (yamlLoader *yamlLoader) LoadActions() []Action {
     var actions []Action
     req := NewRequest(
         "POST",
