@@ -32,7 +32,7 @@ func NewJsonOutput() *jsonOutput {
 }
 
 func (output *jsonOutput) OutputReport(actions []Action) {
-    summaries := summarizeByAction(actions)
+    summaries := output.SummarizeByAction(actions)
     report := report{Name: "Tile", Summaries: summaries}
     bytes, _ := json.Marshal(report)
 
@@ -45,7 +45,7 @@ func (output *jsonOutput) OutputReport(actions []Action) {
     file.Write(bytes)
 }
 
-func summarizeByAction(actions []Action) (summaries []*summary) {
+func (output *jsonOutput) SummarizeByAction(actions []Action) (summaries []*summary) {
     for i, action := range actions {
         results := action.GetResults()
         if len(results) == 0 {
@@ -57,7 +57,7 @@ func summarizeByAction(actions []Action) (summaries []*summary) {
             summaries,
             &summary{
                 Id:                  i,
-                Label:               fmt.Sprintf("%s %s", results[0].Request.Method, results[0].Request.Endpoint),
+                Label:               fmt.Sprintf("%s %s", action.(*Request).Method, action.(*Request).Endpoint),
                 ResponseTimeAverage: fmt.Sprintf("%f", calculateResponseTimeAverage(action.GetResults())),
                 ErrorRate:           fmt.Sprintf("%f", calculateErrorRate(action.GetResults())),
                 Details:             mapResult2Detail(action.GetResults()),
