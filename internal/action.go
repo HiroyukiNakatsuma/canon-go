@@ -1,5 +1,6 @@
 package internal
 
 type Action interface {
-    Do() *Result
+    Do()
+    GetResults() []*Result
 }

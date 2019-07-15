@@ -14,6 +14,7 @@ type Request struct {
     Body     string
     Headers  map[string][]string
     Client   *http.Client
+    Results  []*Result
 }
 
 func NewRequest(method string, endpoint string, body string, headers map[string][]string, client *http.Client) *Request {
@@ -26,7 +27,7 @@ func NewRequest(method string, endpoint string, body string, headers map[string]
     }
 }
 
-func (req *Request) Do() *Result {
+func (req *Request) Do() {
     request, err := http.NewRequest(req.Method, req.Endpoint, bytes.NewBuffer([]byte(req.Body)))
     if err != nil {
         log.Fatal(err)
@@ -55,5 +56,15 @@ func (req *Request) Do() *Result {
         log.Fatal(err)
     }
 
-    return &Result{Request: req, StatusCode: res.StatusCode, Body: b, Time: execTime}
+    result := &Result{Request: req, StatusCode: res.StatusCode, ResponseBody: b, ResponseTime: execTime}
+
+    log.Printf("Response Status: %d", result.StatusCode)
+    log.Printf("Response Body: %s", result.ResponseBody)
+    log.Printf("Response Time: %fs", result.ResponseTime.Seconds())
+
+    req.Results = append(req.Results, result)
+}
+
+func (req *Request) GetResults() []*Result {
+    return req.Results
 }

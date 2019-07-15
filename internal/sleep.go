@@ -1,16 +1,25 @@
 package internal
 
-import "time"
+import (
+    "time"
+    "log"
+)
 
 type Sleep struct {
     Duration time.Duration
+    Results  []*Result
 }
 
 func NewSleep(duration time.Duration) *Sleep {
     return &Sleep{Duration: duration}
 }
 
-func (slp *Sleep) Do() *Result {
+func (slp *Sleep) Do() {
+    log.Printf("sleep started.")
     time.Sleep(slp.Duration * time.Second)
-    return nil
+    log.Printf("sleep finished.")
+}
+
+func (slp *Sleep) GetResults() []*Result {
+    return slp.Results
 }
