@@ -1,5 +1,5 @@
 package internal
 
 type DataOutput interface {
-    OutputSummary(summary []*Summary)
+    OutputReport(actions []Action)
 }

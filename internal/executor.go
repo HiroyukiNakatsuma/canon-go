@@ -4,12 +4,11 @@ import "log"
 
 type Executor struct {
     dataInput  DataInput
-    summarizer Summarizer
     dataOutput DataOutput
 }
 
-func NewExecutor(dataInput DataInput, summarizer Summarizer, dataOutput DataOutput) *Executor {
-    return &Executor{dataInput: dataInput, summarizer: summarizer, dataOutput: dataOutput}
+func NewExecutor(dataInput DataInput, dataOutput DataOutput) *Executor {
+    return &Executor{dataInput: dataInput, dataOutput: dataOutput}
 }
 
 func (e *Executor) Execute() {
@@ -28,7 +27,5 @@ func (e *Executor) Execute() {
         log.Printf("Response Time: %fs", result.ResponseTime.Seconds())
     }
 
-    summary := e.summarizer.Summarize(actions)
-
-    e.dataOutput.OutputSummary(summary)
+    e.dataOutput.OutputReport(actions)
 }
