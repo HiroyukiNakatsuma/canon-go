@@ -27,7 +27,7 @@ func (yamlLoader *YamlLoaderMock) LoadActions() []internal.Action {
 func TestExecute(t *testing.T) {
     cases := map[string]struct {
         dataInput            internal.DataInput
-        summarizer           internal.Summarizer
+        dataOutput           internal.DataOutput
         expectHasError       bool
         expectedErrorMessage string
     }{
@@ -58,6 +58,7 @@ func TestExecute(t *testing.T) {
                     nil,
                     mock.NewMockClient(30, nil)),
             ),
+            dataOutput: internal.NewJsonOutput(),
             expectHasError:       false,
             expectedErrorMessage: "",
         },
@@ -88,6 +89,7 @@ func TestExecute(t *testing.T) {
                     internal.BuildHeader(`content-type: application/json`, `Authorization: Bearer tokenExample`),
                     mock.NewMockClient(30, nil)),
             ),
+            dataOutput: internal.NewJsonOutput(),
             expectHasError:       false,
             expectedErrorMessage: "",
         },
@@ -121,6 +123,7 @@ func TestExecute(t *testing.T) {
                     internal.BuildHeader(`content-type: application/json`, `Authorization: Bearer tokenExample`),
                     mock.NewMockClient(30, nil)),
             ),
+            dataOutput: internal.NewJsonOutput(),
             expectHasError:       false,
             expectedErrorMessage: "",
         },
@@ -128,7 +131,7 @@ func TestExecute(t *testing.T) {
 
     for name, c := range cases {
         t.Run(name, func(t *testing.T) {
-            executor := internal.NewExecutor(c.dataInput, c.summarizer)
+            executor := internal.NewExecutor(c.dataInput, c.dataOutput)
             executor.Execute()
         })
     }
