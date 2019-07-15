@@ -27,7 +27,7 @@ func NewRequest(method string, endpoint string, body string, headers map[string]
     }
 }
 
-func (req *Request) Do() *Result {
+func (req *Request) Do() {
     request, err := http.NewRequest(req.Method, req.Endpoint, bytes.NewBuffer([]byte(req.Body)))
     if err != nil {
         log.Fatal(err)
@@ -57,9 +57,12 @@ func (req *Request) Do() *Result {
     }
 
     result := &Result{Request: req, StatusCode: res.StatusCode, ResponseBody: b, ResponseTime: execTime}
-    req.Results = append(req.Results, result)
 
-    return result
+    log.Printf("Response Status: %d", result.StatusCode)
+    log.Printf("Response Body: %s", result.ResponseBody)
+    log.Printf("Response Time: %fs", result.ResponseTime.Seconds())
+
+    req.Results = append(req.Results, result)
 }
 
 func (req *Request) GetResults() []*Result {
