@@ -32,7 +32,7 @@ func NewJsonOutput() *jsonOutput {
 }
 
 func (output *jsonOutput) OutputReport(actions []Action) {
-    summaries := Summarize(actions)
+    summaries := summarizeByAction(actions)
     report := report{name: "Tile", summaries: summaries}
     bytes, _ := json.Marshal(report)
 
@@ -45,7 +45,7 @@ func (output *jsonOutput) OutputReport(actions []Action) {
     file.Write(bytes)
 }
 
-func Summarize(actions []Action) (summaries []*summary) {
+func summarizeByAction(actions []Action) (summaries []*summary) {
     for i, action := range actions {
         results := action.GetResults()
         if len(results) == 0 {
