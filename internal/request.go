@@ -38,7 +38,7 @@ func (req *Request) Do() {
         }
     }
 
-    log.Printf("Request: %v", request)
+    log.Printf("start request.")
 
     start := time.Now()
 
@@ -59,7 +59,6 @@ func (req *Request) Do() {
     result := &Result{Request: req, StatusCode: res.StatusCode, ResponseBody: b, ResponseTime: execTime}
 
     log.Printf("Response Status: %d", result.StatusCode)
-    log.Printf("Response Body: %s", result.ResponseBody)
     log.Printf("Response Time: %fs", result.ResponseTime.Seconds())
 
     req.Results = append(req.Results, result)
