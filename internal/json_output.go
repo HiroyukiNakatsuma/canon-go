@@ -8,21 +8,21 @@ import (
 )
 
 type report struct {
-    name      string
-    summaries []*summary
+    Name      string     `json:"name"`
+    Summaries []*summary `json:"summaries"`
 }
 
 type summary struct {
-    id                  int
-    label               string
-    responseTimeAverage string
-    errorRate           string
-    details             []*detail
+    Id                  int       `json:"id"`
+    Label               string    `json:"label"`
+    ResponseTimeAverage string    `json:"responseTimeAverage"`
+    ErrorRate           string    `json:"errorRate"`
+    Details             []*detail `json:"details"`
 }
 
 type detail struct {
-    status       int
-    responseTime string
+    Status       int    `json:"status"`
+    ResponseTime string `json:"responseTime"`
 }
 
 type jsonOutput struct{}
@@ -33,7 +33,7 @@ func NewJsonOutput() *jsonOutput {
 
 func (output *jsonOutput) OutputReport(actions []Action) {
     summaries := summarizeByAction(actions)
-    report := report{name: "Tile", summaries: summaries}
+    report := report{Name: "Tile", Summaries: summaries}
     bytes, _ := json.Marshal(report)
 
     file, err := os.Create(`./report.json`)
@@ -56,11 +56,11 @@ func summarizeByAction(actions []Action) (summaries []*summary) {
         summaries = append(
             summaries,
             &summary{
-                id:                  i,
-                label:               fmt.Sprintf("%s %s", results[0].Request.Method, results[0].Request.Endpoint),
-                responseTimeAverage: fmt.Sprintf("%f", calculateResponseTimeAverage(action.GetResults())),
-                errorRate:           fmt.Sprintf("%f", calculateErrorRate(action.GetResults())),
-                details:             mapResult2Detail(action.GetResults()),
+                Id:                  i,
+                Label:               fmt.Sprintf("%s %s", results[0].Request.Method, results[0].Request.Endpoint),
+                ResponseTimeAverage: fmt.Sprintf("%f", calculateResponseTimeAverage(action.GetResults())),
+                ErrorRate:           fmt.Sprintf("%f", calculateErrorRate(action.GetResults())),
+                Details:             mapResult2Detail(action.GetResults()),
             })
     }
     return
@@ -68,7 +68,7 @@ func summarizeByAction(actions []Action) (summaries []*summary) {
 
 func mapResult2Detail(results []*Result) (details []*detail) {
     for _, result := range results {
-        details = append(details, &detail{status: result.StatusCode, responseTime: fmt.Sprintf("%fs", result.ResponseTime.Seconds())})
+        details = append(details, &detail{Status: result.StatusCode, ResponseTime: fmt.Sprintf("%fs", result.ResponseTime.Seconds())})
     }
     return
 }
