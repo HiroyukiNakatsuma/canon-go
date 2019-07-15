@@ -5,5 +5,5 @@ type Summary struct {
     Label               string
     ResponseTimeAverage float32
     ErrorRate           float32
-    Results             *[]Result
+    Results             []*Result
 }
