@@ -57,7 +57,7 @@ func TestOutputReport(t *testing.T) {
                 t.Errorf("not exists report file.")
             }
 
-            afterTest()
+            CleanResultFile()
         })
     }
 }
@@ -221,7 +221,7 @@ func existsReportFile() bool {
     return err == nil
 }
 
-func afterTest() {
+func CleanResultFile() {
     err := os.Remove("./report.json")
     if err != nil {
         fmt.Println(err)

@@ -135,4 +135,6 @@ func TestExecute(t *testing.T) {
             executor.Execute()
         })
     }
+
+    CleanResultFile()
 }
