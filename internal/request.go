@@ -56,7 +56,7 @@ func (req *Request) Do() {
         log.Fatal(err)
     }
 
-    result := &Result{Request: req, StatusCode: res.StatusCode, ResponseBody: b, ResponseTime: execTime}
+    result := &Result{StatusCode: res.StatusCode, ResponseBody: b, ResponseTime: execTime}
 
     log.Printf("Response Status: %d", result.StatusCode)
     log.Printf("Response Time: %fs", result.ResponseTime.Seconds())
