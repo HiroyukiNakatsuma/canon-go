@@ -13,7 +13,6 @@ type report struct {
 }
 
 type summary struct {
-    Id                  int       `json:"id"`
     Label               string    `json:"label"`
     ResponseTimeAverage string    `json:"responseTimeAverage"`
     ErrorRate           string    `json:"errorRate"`
@@ -46,7 +45,7 @@ func (output *jsonOutput) OutputReport(actions []Action) {
 }
 
 func (output *jsonOutput) SummarizeByAction(actions []Action) (summaries []*summary) {
-    for i, action := range actions {
+    for _, action := range actions {
         results := action.GetResults()
         if len(results) == 0 {
             log.Printf("no result.")
@@ -56,10 +55,9 @@ func (output *jsonOutput) SummarizeByAction(actions []Action) (summaries []*summ
         summaries = append(
             summaries,
             &summary{
-                Id:                  i,
                 Label:               fmt.Sprintf("%s %s", action.(*Request).Method, action.(*Request).Endpoint),
-                ResponseTimeAverage: fmt.Sprintf("%f", calculateResponseTimeAverage(action.GetResults())),
-                ErrorRate:           fmt.Sprintf("%f", calculateErrorRate(action.GetResults())),
+                ResponseTimeAverage: fmt.Sprintf("%.2fs", calculateResponseTimeAverage(action.GetResults())),
+                ErrorRate:           fmt.Sprintf("%d%%", int(calculateErrorRate(action.GetResults()) * 100)),
                 Details:             mapResult2Detail(action.GetResults()),
             })
     }
@@ -82,15 +80,15 @@ func calculateResponseTimeAverage(results []*Result) float32 {
     return float32(sum / num)
 }
 
-func calculateErrorRate(results []*Result) float32 {
-    var num = float32(len(results))
+func calculateErrorRate(results []*Result) float64 {
+    var num = len(results)
     var errorCount uint
     for _, result := range results {
         if isErrorStatus(result.StatusCode) {
             errorCount += 1
         }
     }
-    return float32(errorCount) / num
+    return float64(errorCount) / float64(num)
 }
 
 func isErrorStatus(statusCode int) bool {
