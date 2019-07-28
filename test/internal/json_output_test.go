@@ -75,7 +75,7 @@ func TestSummarizeByAction(t *testing.T) {
                     Method:   http.MethodGet,
                     Endpoint: "http://example.com",
                     Body:     "",
-                    Headers:  map[string][]string{},
+                    Headers:  map[string]string{},
                     Results: []*internal.Result{
                         {
                             StatusCode:   http.StatusOK,
@@ -103,7 +103,7 @@ func TestSummarizeByAction(t *testing.T) {
                     Method:   http.MethodPost,
                     Endpoint: "http://example.com",
                     Body:     `{"hoge":"fuga""}`,
-                    Headers:  map[string][]string{},
+                    Headers:  map[string]string{},
                     Results: []*internal.Result{
                         {
                             StatusCode:   http.StatusOK,
@@ -137,7 +137,7 @@ func TestSummarizeByAction(t *testing.T) {
                     Method:   http.MethodGet,
                     Endpoint: "http://example.com",
                     Body:     "",
-                    Headers:  map[string][]string{},
+                    Headers:  map[string]string{},
                     Results: []*internal.Result{
                         {
                             StatusCode:   http.StatusOK,
@@ -166,7 +166,7 @@ func TestSummarizeByAction(t *testing.T) {
                     Method:   http.MethodPost,
                     Endpoint: "http://example.com",
                     Body:     `{"hoge":"fuga""}`,
-                    Headers:  map[string][]string{},
+                    Headers:  map[string]string{},
                     Results: []*internal.Result{
                         {
                             StatusCode:   http.StatusOK,

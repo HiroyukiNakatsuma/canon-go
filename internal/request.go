@@ -12,12 +12,12 @@ type Request struct {
     Method   string
     Endpoint string
     Body     string
-    Headers  map[string][]string
+    Headers  map[string]string
     Client   *http.Client
     Results  []*Result
 }
 
-func NewRequest(method string, endpoint string, body string, headers map[string][]string, client *http.Client) *Request {
+func NewRequest(method string, endpoint string, body string, headers map[string]string, client *http.Client) *Request {
     return &Request{
         Method:   method,
         Endpoint: endpoint,
@@ -32,10 +32,8 @@ func (req *Request) Do() {
     if err != nil {
         log.Fatal(err)
     }
-    for k, vs := range req.Headers {
-        for _, v := range vs {
-            request.Header.Add(k, v)
-        }
+    for k, v := range req.Headers {
+        request.Header.Add(k, v)
     }
 
     log.Printf("start request.")
