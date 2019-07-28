@@ -57,7 +57,7 @@ func (output *jsonOutput) SummarizeByAction(actions []Action) (summaries []*summ
             &summary{
                 Label:               fmt.Sprintf("%s %s", action.(*Request).Method, action.(*Request).Endpoint),
                 ResponseTimeAverage: fmt.Sprintf("%.2fs", calculateResponseTimeAverage(action.GetResults())),
-                ErrorRate:           fmt.Sprintf("%d%%", int(calculateErrorRate(action.GetResults()) * 100)),
+                ErrorRate:           fmt.Sprintf("%d%%", int(calculateErrorRate(action.GetResults())*100)),
                 Details:             mapResult2Detail(action.GetResults()),
             })
     }
