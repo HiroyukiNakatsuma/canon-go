@@ -42,7 +42,7 @@ func TestExecute(t *testing.T) {
                     nil,
                     mock.NewMockClient(30, nil)),
             ),
-            dataOutput:           internal.NewJsonOutput(),
+            dataOutput:           mock.NewJsonOutputMock(),
             expectHasError:       false,
             expectedErrorMessage: "",
         },
@@ -73,7 +73,7 @@ func TestExecute(t *testing.T) {
                     map[string]string{"content-type": "application/json", "Authorization": "Bearer tokenExample"},
                     mock.NewMockClient(30, nil)),
             ),
-            dataOutput:           internal.NewJsonOutput(),
+            dataOutput:           mock.NewJsonOutputMock(),
             expectHasError:       false,
             expectedErrorMessage: "",
         },
@@ -107,7 +107,7 @@ func TestExecute(t *testing.T) {
                     map[string]string{"content-type": "application/json", "Authorization": "Bearer tokenExample"},
                     mock.NewMockClient(30, nil)),
             ),
-            dataOutput:           internal.NewJsonOutput(),
+            dataOutput:           mock.NewJsonOutputMock(),
             expectHasError:       false,
             expectedErrorMessage: "",
         },
@@ -119,6 +119,4 @@ func TestExecute(t *testing.T) {
             executor.Execute()
         })
     }
-
-    CleanResultFile()
 }
