@@ -8,22 +8,6 @@ import (
     "github.com/HiroyukiNakatsuma/canon-go/test/mock"
 )
 
-type YamlLoaderMock struct {
-    actions []internal.Action
-}
-
-func NewYamlLoaderMock(actions ...internal.Action) *YamlLoaderMock {
-    return &YamlLoaderMock{actions: actions}
-}
-
-func (yamlLoader *YamlLoaderMock) LoadConfig() *internal.ActionConfig {
-    return &internal.ActionConfig{Threads: 1, Loop: 1}
-}
-
-func (yamlLoader *YamlLoaderMock) LoadActions() []internal.Action {
-    return yamlLoader.actions
-}
-
 func TestExecute(t *testing.T) {
     cases := map[string]struct {
         dataInput            internal.DataInput
@@ -32,7 +16,7 @@ func TestExecute(t *testing.T) {
         expectedErrorMessage string
     }{
         "valid requests": {
-            dataInput: NewYamlLoaderMock(
+            dataInput: mock.NewYamlLoaderMock(
                 internal.NewRequest(
                     http.MethodGet,
                     `http://example.com?greet="Hello World!"`,
@@ -63,7 +47,7 @@ func TestExecute(t *testing.T) {
             expectedErrorMessage: "",
         },
         "valid requests with headers": {
-            dataInput: NewYamlLoaderMock(
+            dataInput: mock.NewYamlLoaderMock(
                 internal.NewRequest(
                     http.MethodGet,
                     `http://example.com?greet="Hello World!"`,
@@ -94,7 +78,7 @@ func TestExecute(t *testing.T) {
             expectedErrorMessage: "",
         },
         "valid requests with sleep": {
-            dataInput: NewYamlLoaderMock(
+            dataInput: mock.NewYamlLoaderMock(
                 internal.NewRequest(
                     http.MethodGet,
                     `http://example.com?greet="Hello World!"`,
