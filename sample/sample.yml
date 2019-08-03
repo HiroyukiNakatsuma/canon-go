@@ -1,0 +1,27 @@
+timeout: 30
+actions:
+  # Choose "request" or "sleep"
+  - request:
+      method: GET
+      url: http://example.com/?greet="Hello World!"
+      body:
+      ###
+      # Multiple headers define like this:
+      # Accept: application/json,text/csv,application/xml
+      #
+      # not like this:
+      # Accept: application/json
+      # Accept: text/csv
+      # Accept: application/xml
+      ###
+      headers:
+        Content-Type: application/json
+        Authorization: Bearer token
+  - sleep: 10
+  - request:
+      method: POST
+      url: http://example.com/
+      body: '{"greet":"Hello World!"}'
+      headers:
+        Content-Type: application/json
+        Authorization: Bearer token
