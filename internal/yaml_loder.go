@@ -80,7 +80,7 @@ func buildActions(input *input) (actions []Action) {
 
 func buildHeaders(headers interface{}) map[string]string {
     headersMap := headers.(map[interface{}]interface{})
-    headersStrMap := map[string]string{}
+    headersStrMap := make(map[string]string)
     for k, v := range headersMap {
         headersStrMap[k.(string)] = v.(string)
     }
