@@ -5,6 +5,7 @@ import (
     "time"
     "log"
     "fmt"
+    "io/ioutil"
 
     "gopkg.in/yaml.v2"
 )
@@ -25,28 +26,13 @@ func (yamlLoader *yamlLoader) LoadConfig() *ActionConfig {
 }
 
 func (yamlLoader *yamlLoader) LoadActions() []Action {
-    yamlInput := []byte(`
-timeout: 30
-actions:
-  - request:
-      method: GET
-      endpoint: http://example.com/
-      body: 'greet="Hello World!"'
-      headers:
-          content-type: 'application/json'
-          Authorization: 'Bearer token'
-  - sleep: 10
-  - request:
-      method: POST
-      endpoint: http://example.com/
-      body: '{"greet":"Hello World!"}'
-      headers:
-          content-type: 'application/json'
-          Authorization: 'Bearer token'
-`)
+    yamlInput, err := ioutil.ReadFile("./sample/sample.yml")
+    if err != nil {
+        panic(err)
+    }
 
     input := input{}
-    err := yaml.Unmarshal(yamlInput, &input)
+    err = yaml.Unmarshal(yamlInput, &input)
     if err != nil {
         log.Fatal(err)
     }
