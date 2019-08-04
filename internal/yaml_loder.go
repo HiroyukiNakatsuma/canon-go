@@ -11,15 +11,20 @@ import (
     "gopkg.in/yaml.v2"
 )
 
-type yamlLoader struct{}
+type yamlLoader struct {
+    Filepath string
+}
 
 type input struct {
     Timeout time.Duration
     Actions []map[string]interface{}
 }
 
-func NewYamlLoader() *yamlLoader {
-    return &yamlLoader{}
+func NewYamlLoader(filepath string) *yamlLoader {
+    if filepath == "" {
+        filepath = "./sample/sample.yml"
+    }
+    return &yamlLoader{Filepath: filepath}
 }
 
 func (yamlLoader *yamlLoader) LoadConfig() *ActionConfig {
@@ -27,7 +32,7 @@ func (yamlLoader *yamlLoader) LoadConfig() *ActionConfig {
 }
 
 func (yamlLoader *yamlLoader) LoadActions() []Action {
-    yamlInput, err := ioutil.ReadFile("./sample/sample.yml")
+    yamlInput, err := ioutil.ReadFile(yamlLoader.Filepath)
     if err != nil {
         panic(err)
     }
