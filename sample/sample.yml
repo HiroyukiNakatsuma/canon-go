@@ -4,7 +4,11 @@ actions:
   - request:
       method: GET
       url: http://example.com/?greet="Hello World!"
-      body:
+  - sleep: 10
+  - request:
+      method: POST
+      url: http://example.com/
+      body: '{"greet":"Hello World!"}'
       ###
       # Multiple headers define like this:
       # Accept: application/json,text/csv,application/xml
@@ -14,14 +18,6 @@ actions:
       # Accept: text/csv
       # Accept: application/xml
       ###
-      headers:
-        Content-Type: application/json
-        Authorization: Bearer token
-  - sleep: 10
-  - request:
-      method: POST
-      url: http://example.com/
-      body: '{"greet":"Hello World!"}'
       headers:
         Content-Type: application/json
         Authorization: Bearer token
