@@ -72,10 +72,10 @@ func TestSummarizeByAction(t *testing.T) {
         "simple requests": {
             actions: []internal.Action{
                 &internal.Request{
-                    Method:   http.MethodGet,
-                    Endpoint: "http://example.com",
-                    Body:     "",
-                    Headers:  map[string]string{},
+                    Method:  http.MethodGet,
+                    Url:     "http://example.com",
+                    Body:    "",
+                    Headers: map[string]string{},
                     Results: []*internal.Result{
                         {
                             StatusCode:   http.StatusOK,
@@ -100,10 +100,10 @@ func TestSummarizeByAction(t *testing.T) {
                     },
                 },
                 &internal.Request{
-                    Method:   http.MethodPost,
-                    Endpoint: "http://example.com",
-                    Body:     `{"hoge":"fuga""}`,
-                    Headers:  map[string]string{},
+                    Method:  http.MethodPost,
+                    Url:     "http://example.com",
+                    Body:    `{"hoge":"fuga""}`,
+                    Headers: map[string]string{},
                     Results: []*internal.Result{
                         {
                             StatusCode:   http.StatusOK,
@@ -134,10 +134,10 @@ func TestSummarizeByAction(t *testing.T) {
         "requests with sleep": {
             actions: []internal.Action{
                 &internal.Request{
-                    Method:   http.MethodGet,
-                    Endpoint: "http://example.com",
-                    Body:     "",
-                    Headers:  map[string]string{},
+                    Method:  http.MethodGet,
+                    Url:     "http://example.com",
+                    Body:    "",
+                    Headers: map[string]string{},
                     Results: []*internal.Result{
                         {
                             StatusCode:   http.StatusOK,
@@ -163,10 +163,10 @@ func TestSummarizeByAction(t *testing.T) {
                 },
                 &internal.Sleep{Duration: 10},
                 &internal.Request{
-                    Method:   http.MethodPost,
-                    Endpoint: "http://example.com",
-                    Body:     `{"hoge":"fuga""}`,
-                    Headers:  map[string]string{},
+                    Method:  http.MethodPost,
+                    Url:     "http://example.com",
+                    Body:    `{"hoge":"fuga""}`,
+                    Headers: map[string]string{},
                     Results: []*internal.Result{
                         {
                             StatusCode:   http.StatusOK,

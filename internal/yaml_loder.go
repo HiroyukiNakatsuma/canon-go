@@ -49,7 +49,7 @@ func buildActions(input *input) (actions []Action) {
                 actionMap := v.(map[interface{}]interface{})
                 actions = append(actions,
                     NewRequest(actionMap["method"].(string),
-                        actionMap["endpoint"].(string),
+                        actionMap["url"].(string),
                         actionMap["body"].(string),
                         buildHeaders(actionMap["headers"]),
                         getClient(input.Timeout)))
