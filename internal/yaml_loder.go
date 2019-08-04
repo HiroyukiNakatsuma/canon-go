@@ -6,6 +6,7 @@ import (
     "log"
     "fmt"
     "io/ioutil"
+    "errors"
 
     "gopkg.in/yaml.v2"
 )
@@ -37,22 +38,25 @@ func (yamlLoader *yamlLoader) LoadActions() []Action {
         log.Fatal(err)
     }
 
-    actions := buildActions(&input)
+    actions, err := buildActions(&input)
+    if err != nil {
+        log.Fatal(err)
+    }
+
     return actions
 }
 
-func buildActions(input *input) (actions []Action) {
+func buildActions(input *input) (actions []Action, err error) {
     for _, action := range input.Actions {
         for k, v := range action {
             switch k {
             case "request":
                 actionMap := v.(map[interface{}]interface{})
-                actions = append(actions,
-                    NewRequest(actionMap["method"].(string),
-                        actionMap["url"].(string),
-                        actionMap["body"].(string),
-                        buildHeaders(actionMap["headers"]),
-                        getClient(input.Timeout)))
+                req, err := buildRequest(actionMap, input.Timeout)
+                if err != nil {
+                    return nil, err
+                }
+                actions = append(actions, req)
             case "sleep":
                 duration := time.Duration(v.(int))
                 actions = append(actions, NewSleep(duration*time.Second))
@@ -62,6 +66,28 @@ func buildActions(input *input) (actions []Action) {
         }
     }
     return
+}
+
+func buildRequest(requestMap map[interface{}]interface{}, timeout time.Duration) (req *Request, error error) {
+    method := requestMap["method"]
+    url := requestMap["url"]
+    body := requestMap["body"]
+    if method == nil {
+        return nil, errors.New("method is required.")
+    }
+    if url == nil {
+        return nil, errors.New("url is required.")
+    }
+    if body == nil {
+        body = ""
+    }
+
+    var headers map[string]string
+    if requestMap["headers"] != nil {
+        headers = buildHeaders(requestMap["headers"])
+    }
+
+    return NewRequest(method.(string), url.(string), body.(string), headers, getClient(timeout)), nil
 }
 
 func buildHeaders(headers interface{}) map[string]string {
