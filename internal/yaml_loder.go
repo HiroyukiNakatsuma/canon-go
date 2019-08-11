@@ -22,7 +22,7 @@ type input struct {
 
 func NewYamlLoader(filepath string) *yamlLoader {
     if filepath == "" {
-        filepath = "./sample/sample.yml"
+        filepath = "./sample/input.yml"
     }
     return &yamlLoader{Filepath: filepath}
 }
