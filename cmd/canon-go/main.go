@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-    var inputFilepath = flag.String("input", "./sample.yml", "input file path.")
+    var inputFilepath = flag.String("input", "./sample/input.yml", "input file path.")
     flag.Parse()
     internal.NewExecutor(internal.NewYamlLoader(*inputFilepath), internal.NewJsonOutput()).Execute()
 }
