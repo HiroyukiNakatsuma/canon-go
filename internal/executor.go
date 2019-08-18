@@ -1,13 +1,18 @@
 package internal
 
-import "log"
+import (
+    "log"
+
+    "github.com/HiroyukiNakatsuma/canon-go/internal/data_input"
+    "github.com/HiroyukiNakatsuma/canon-go/internal/data_output"
+)
 
 type Executor struct {
-    dataInput  DataInput
-    dataOutput DataOutput
+    dataInput  data_input.DataInput
+    dataOutput data_output.DataOutput
 }
 
-func NewExecutor(dataInput DataInput, dataOutput DataOutput) *Executor {
+func NewExecutor(dataInput data_input.DataInput, dataOutput data_output.DataOutput) *Executor {
     return &Executor{dataInput: dataInput, dataOutput: dataOutput}
 }
 
