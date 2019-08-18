@@ -1,10 +1,9 @@
 timeout: 30
-actions:
-  # Choose "request" or "sleep"
+actions:   # Choose "request" or "sleep"
   - request:
-      method: GET
+      method: GET   # Choose "GET" or "POST" or "PUT" or "PATCH" or "DELETE"
       url: http://localhost:80/?greet="Hello World!"
-  - sleep: 10
+  - sleep: 10   # Define sleep time seconds in Integer
   - request:
       method: POST
       url: http://localhost:80/
