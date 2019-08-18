@@ -24,13 +24,13 @@ func TestLoadActions(t *testing.T) {
 actions:
   - request:
       method: GET
-      url: http://example.com/
+      url: http://localhost:80/
 `),
             inputFilepath: "./input.yml",
             expectActions: []action.Action{
                 &action.Request{
                     Method: "GET",
-                    Url:    "http://example.com/",
+                    Url:    "http://localhost:80/",
                 },
             },
             expectHasError:       false,
@@ -55,14 +55,14 @@ actions:
 actions:
   - request:
       method: POST
-      url: http://example.com/
+      url: http://localhost:80/
       body: '{"hoge":1,"fuga":2}'
 `),
             inputFilepath: "./input.yml",
             expectActions: []action.Action{
                 &action.Request{
                     Method: "POST",
-                    Url:    "http://example.com/",
+                    Url:    "http://localhost:80/",
                     Body:   `{"hoge":1,"fuga":2}`,
                 },
             },
@@ -74,7 +74,7 @@ actions:
 actions:
   - request:
       method: POST
-      url: http://example.com/
+      url: http://localhost:80/
       body: '{"hoge":1,"fuga":2}'
       headers:
         Content-Type: application/json
@@ -84,7 +84,7 @@ actions:
             expectActions: []action.Action{
                 &action.Request{
                     Method: "POST",
-                    Url:    "http://example.com/",
+                    Url:    "http://localhost:80/",
                     Body:   `{"hoge":1,"fuga":2}`,
                     Headers: map[string]string{
                         "Content-Type":  "application/json",
@@ -100,11 +100,11 @@ actions:
 actions:
   - request:
       method: GET
-      url: http://example.com/
+      url: http://localhost:80/
   - sleep: 10
   - request:
       method: POST
-      url: http://example.com/
+      url: http://localhost:80/
       body: '{"hoge":1,"fuga":2}'
       headers:
         Content-Type: application/json
@@ -114,12 +114,12 @@ actions:
             expectActions: []action.Action{
                 &action.Request{
                     Method: "GET",
-                    Url:    "http://example.com/",
+                    Url:    "http://localhost:80/",
                 },
                 &action.Sleep{Duration: 10 * time.Second},
                 &action.Request{
                     Method: "POST",
-                    Url:    "http://example.com/",
+                    Url:    "http://localhost:80/",
                     Body:   `{"hoge":1,"fuga":2}`,
                     Headers: map[string]string{
                         "Content-Type":  "application/json",
@@ -135,7 +135,7 @@ actions:
 actions:
   - request:
       method: POST
-      url: http://example.com/
+      url: http://localhost:80/
       body: '{"hoge":1,"fuga":2}'
       headers:
         Accept: application/json
@@ -145,7 +145,7 @@ actions:
             expectActions: []action.Action{
                 &action.Request{
                     Method:  "POST",
-                    Url:     "http://example.com/",
+                    Url:     "http://localhost:80/",
                     Body:    `{"hoge":1,"fuga":2}`,
                     Headers: map[string]string{"Accept": "text/html"},
                 },
@@ -158,7 +158,7 @@ actions:
 actions:
   - request:
       method: GET
-      url: http://example.com/
+      url: http://localhost:80/
 `),
             inputFilepath:        "./invalid_filepath.yml",
             expectActions:        nil,
@@ -180,7 +180,7 @@ actions:
             inputContent: []byte(`
 actions:
   - request:
-      url: http://example.com/
+      url: http://localhost:80/
 `),
             inputFilepath:        "./input.yml",
             expectActions:        nil,

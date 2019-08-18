@@ -23,7 +23,7 @@ func TestOutputReport(t *testing.T) {
             actions: []action.Action{
                 action.NewRequest(
                     http.MethodGet,
-                    `http://example.com?greet="Hello World!"`,
+                    `http://localhost:80?greet="Hello World!"`,
                     ``,
                     nil,
                     mock.NewMockClient(30, nil)),
@@ -40,7 +40,7 @@ func TestOutputReport(t *testing.T) {
             actions: []action.Action{
                 action.NewRequest(
                     http.MethodGet,
-                    `http://example.com?greet="Hello World!"`,
+                    `http://localhost:80?greet="Hello World!"`,
                     ``,
                     nil,
                     mock.NewMockClient(30, nil)),
@@ -53,7 +53,7 @@ func TestOutputReport(t *testing.T) {
             actions: []action.Action{
                 action.NewRequest(
                     http.MethodGet,
-                    `http://example.com?greet="Hello World!"`,
+                    `http://localhost:80?greet="Hello World!"`,
                     ``,
                     nil,
                     mock.NewMockClient(30, nil)),
@@ -87,7 +87,7 @@ func TestSummarizeByAction(t *testing.T) {
             actions: []action.Action{
                 &action.Request{
                     Method:  http.MethodGet,
-                    Url:     "http://example.com",
+                    Url:     "http://localhost:80",
                     Body:    "",
                     Headers: map[string]string{},
                     Results: []*result.Result{
@@ -115,7 +115,7 @@ func TestSummarizeByAction(t *testing.T) {
                 },
                 &action.Request{
                     Method:  http.MethodPost,
-                    Url:     "http://example.com",
+                    Url:     "http://localhost:80",
                     Body:    `{"hoge":"fuga""}`,
                     Headers: map[string]string{},
                     Results: []*result.Result{
@@ -133,8 +133,8 @@ func TestSummarizeByAction(t *testing.T) {
                 },
             },
             expectLabel: []string{
-                "GET http://example.com",
-                "POST http://example.com",
+                "GET http://localhost:80",
+                "POST http://localhost:80",
             },
             expectResponseTimeAverage: []string{
                 "0.50s",
@@ -149,7 +149,7 @@ func TestSummarizeByAction(t *testing.T) {
             actions: []action.Action{
                 &action.Request{
                     Method:  http.MethodGet,
-                    Url:     "http://example.com",
+                    Url:     "http://localhost:80",
                     Body:    "",
                     Headers: map[string]string{},
                     Results: []*result.Result{
@@ -178,7 +178,7 @@ func TestSummarizeByAction(t *testing.T) {
                 &action.Sleep{Duration: 10},
                 &action.Request{
                     Method:  http.MethodPost,
-                    Url:     "http://example.com",
+                    Url:     "http://localhost:80",
                     Body:    `{"hoge":"fuga""}`,
                     Headers: map[string]string{},
                     Results: []*result.Result{
@@ -196,8 +196,8 @@ func TestSummarizeByAction(t *testing.T) {
                 },
             },
             expectLabel: []string{
-                "GET http://example.com",
-                "POST http://example.com",
+                "GET http://localhost:80",
+                "POST http://localhost:80",
             },
             expectResponseTimeAverage: []string{
                 "0.50s",
