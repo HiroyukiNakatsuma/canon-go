@@ -1,4 +1,4 @@
-package internal
+package data_input
 
 import (
     "net/http"
@@ -8,6 +8,9 @@ import (
     "errors"
 
     "gopkg.in/yaml.v2"
+
+    "github.com/HiroyukiNakatsuma/canon-go/internal/config"
+    "github.com/HiroyukiNakatsuma/canon-go/internal/action"
 )
 
 type yamlLoader struct {
@@ -26,11 +29,11 @@ func NewYamlLoader(filepath string) *yamlLoader {
     return &yamlLoader{Filepath: filepath}
 }
 
-func (yamlLoader *yamlLoader) LoadConfig() *ActionConfig {
-    return &ActionConfig{Threads: 1, Loop: 1}
+func (yamlLoader *yamlLoader) LoadConfig() *config.ActionConfig {
+    return &config.ActionConfig{Threads: 1, Loop: 1}
 }
 
-func (yamlLoader *yamlLoader) LoadActions() ([]Action, error) {
+func (yamlLoader *yamlLoader) LoadActions() ([]action.Action, error) {
     yamlInput, err := ioutil.ReadFile(yamlLoader.Filepath)
     if err != nil {
         return nil, errors.New("invalid filepath")
@@ -51,9 +54,9 @@ func (yamlLoader *yamlLoader) LoadActions() ([]Action, error) {
     return actions, nil
 }
 
-func buildActions(input *input) (actions []Action, err error) {
-    for _, action := range input.Actions {
-        for k, v := range action {
+func buildActions(input *input) (actions []action.Action, err error) {
+    for _, act := range input.Actions {
+        for k, v := range act {
             switch k {
             case "request":
                 actionMap := v.(map[interface{}]interface{})
@@ -64,7 +67,7 @@ func buildActions(input *input) (actions []Action, err error) {
                 actions = append(actions, req)
             case "sleep":
                 duration := time.Duration(v.(int))
-                actions = append(actions, NewSleep(duration))
+                actions = append(actions, action.NewSleep(duration))
             default:
                 return nil, errors.New("invalid input")
             }
@@ -73,7 +76,7 @@ func buildActions(input *input) (actions []Action, err error) {
     return
 }
 
-func buildRequest(requestMap map[interface{}]interface{}, timeout time.Duration) (req *Request, err error) {
+func buildRequest(requestMap map[interface{}]interface{}, timeout time.Duration) (req *action.Request, err error) {
     method := requestMap["method"]
     url := requestMap["url"]
     body := requestMap["body"]
@@ -92,7 +95,7 @@ func buildRequest(requestMap map[interface{}]interface{}, timeout time.Duration)
         headers = buildHeaders(requestMap["headers"])
     }
 
-    return NewRequest(method.(string), url.(string), body.(string), headers, getClient(timeout)), nil
+    return action.NewRequest(method.(string), url.(string), body.(string), headers, getClient(timeout)), nil
 }
 
 func buildHeaders(headers interface{}) map[string]string {

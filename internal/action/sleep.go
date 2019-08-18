@@ -1,13 +1,15 @@
-package internal
+package action
 
 import (
     "time"
     "log"
+
+    "github.com/HiroyukiNakatsuma/canon-go/internal/result"
 )
 
 type Sleep struct {
     Duration time.Duration
-    Results  []*Result
+    Results  []*result.Result
 }
 
 func NewSleep(duration time.Duration) *Sleep {
@@ -20,6 +22,6 @@ func (slp *Sleep) Do() {
     log.Printf("sleep finished.")
 }
 
-func (slp *Sleep) GetResults() []*Result {
+func (slp *Sleep) GetResults() []*result.Result {
     return slp.Results
 }
