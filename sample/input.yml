@@ -1,4 +1,4 @@
-timeout: 30
+timeout: 30   # HTTP connection time
 actions:   # Choose "request" or "sleep"
   - request:
       method: GET   # Choose "GET" or "POST" or "PUT" or "PATCH" or "DELETE"
