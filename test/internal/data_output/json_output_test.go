@@ -15,51 +15,63 @@ import (
 
 func TestOutputReport(t *testing.T) {
     cases := map[string]struct {
-        actions              []action.Action
-        expectHasError       bool
-        expectedErrorMessage string
+        actions        []action.Action
+        outputFilepath string
+        expectHasError bool
     }{
         "single request": {
             actions: []action.Action{
                 action.NewRequest(
                     http.MethodGet,
-                    `http://example.com?greet="Hello World!"`,
+                    `http://localhost:80?greet="Hello World!"`,
                     ``,
                     nil,
                     mock.NewMockClient(30, nil)),
             },
-            expectHasError:       false,
-            expectedErrorMessage: "",
+            outputFilepath: "./output.json",
+            expectHasError: false,
         },
         "single sleep": {
-            actions:              []action.Action{action.NewSleep(5)},
-            expectHasError:       false,
-            expectedErrorMessage: "",
+            actions:        []action.Action{action.NewSleep(5)},
+            outputFilepath: "./output.json",
+            expectHasError: false,
         },
         "request with sleep": {
             actions: []action.Action{
                 action.NewRequest(
                     http.MethodGet,
-                    `http://example.com?greet="Hello World!"`,
+                    `http://localhost:80?greet="Hello World!"`,
                     ``,
                     nil,
                     mock.NewMockClient(30, nil)),
                 action.NewSleep(5),
             },
-            expectHasError:       false,
-            expectedErrorMessage: "",
+            outputFilepath: "./output.json",
+            expectHasError: false,
+        },
+        "invalid output filepath": {
+            actions: []action.Action{
+                action.NewRequest(
+                    http.MethodGet,
+                    `http://localhost:80?greet="Hello World!"`,
+                    ``,
+                    nil,
+                    mock.NewMockClient(30, nil)),
+            },
+            outputFilepath: "./invalid_filepath.json",
+            expectHasError: true,
         },
     }
 
     for name, c := range cases {
         t.Run(name, func(t *testing.T) {
-            data_output.NewJsonOutput().OutputReport(c.actions)
+            data_output.NewJsonOutput("./output.json").OutputReport(c.actions)
 
-            if !existsReportFile() {
+            if !c.expectHasError && !existsReportFile(c.outputFilepath) {
                 t.Errorf("not exists report file.")
             }
 
-            CleanResultFile()
+            CleanResultFile("./output.json")
         })
     }
 }
@@ -75,7 +87,7 @@ func TestSummarizeByAction(t *testing.T) {
             actions: []action.Action{
                 &action.Request{
                     Method:  http.MethodGet,
-                    Url:     "http://example.com",
+                    Url:     "http://localhost:80",
                     Body:    "",
                     Headers: map[string]string{},
                     Results: []*result.Result{
@@ -103,7 +115,7 @@ func TestSummarizeByAction(t *testing.T) {
                 },
                 &action.Request{
                     Method:  http.MethodPost,
-                    Url:     "http://example.com",
+                    Url:     "http://localhost:80",
                     Body:    `{"hoge":"fuga""}`,
                     Headers: map[string]string{},
                     Results: []*result.Result{
@@ -121,8 +133,8 @@ func TestSummarizeByAction(t *testing.T) {
                 },
             },
             expectLabel: []string{
-                "GET http://example.com",
-                "POST http://example.com",
+                "GET http://localhost:80",
+                "POST http://localhost:80",
             },
             expectResponseTimeAverage: []string{
                 "0.50s",
@@ -137,7 +149,7 @@ func TestSummarizeByAction(t *testing.T) {
             actions: []action.Action{
                 &action.Request{
                     Method:  http.MethodGet,
-                    Url:     "http://example.com",
+                    Url:     "http://localhost:80",
                     Body:    "",
                     Headers: map[string]string{},
                     Results: []*result.Result{
@@ -166,7 +178,7 @@ func TestSummarizeByAction(t *testing.T) {
                 &action.Sleep{Duration: 10},
                 &action.Request{
                     Method:  http.MethodPost,
-                    Url:     "http://example.com",
+                    Url:     "http://localhost:80",
                     Body:    `{"hoge":"fuga""}`,
                     Headers: map[string]string{},
                     Results: []*result.Result{
@@ -184,8 +196,8 @@ func TestSummarizeByAction(t *testing.T) {
                 },
             },
             expectLabel: []string{
-                "GET http://example.com",
-                "POST http://example.com",
+                "GET http://localhost:80",
+                "POST http://localhost:80",
             },
             expectResponseTimeAverage: []string{
                 "0.50s",
@@ -200,7 +212,7 @@ func TestSummarizeByAction(t *testing.T) {
 
     for name, c := range cases {
         t.Run(name, func(t *testing.T) {
-            summaries := data_output.NewJsonOutput().SummarizeByAction(c.actions)
+            summaries := data_output.NewJsonOutput("./output.json").SummarizeByAction(c.actions)
             for i, summary := range summaries {
                 if summary.Label != c.expectLabel[i] {
                     t.Errorf("invalid summary Label.")
@@ -218,13 +230,13 @@ func TestSummarizeByAction(t *testing.T) {
     }
 }
 
-func existsReportFile() bool {
-    _, err := os.Stat("./report.json")
+func existsReportFile(filepath string) bool {
+    _, err := os.Stat(filepath)
     return err == nil
 }
 
-func CleanResultFile() {
-    err := os.Remove("./report.json")
+func CleanResultFile(filepath string) {
+    err := os.Remove(filepath)
     if err != nil {
         fmt.Println(err)
     }

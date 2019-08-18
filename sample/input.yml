@@ -3,11 +3,11 @@ actions:
   # Choose "request" or "sleep"
   - request:
       method: GET
-      url: http://example.com/?greet="Hello World!"
+      url: http://localhost:80/?greet="Hello World!"
   - sleep: 10
   - request:
       method: POST
-      url: http://example.com/
+      url: http://localhost:80/
       body: '{"greet":"Hello World!"}'
       ###
       # Define Multiple contents header like this:
