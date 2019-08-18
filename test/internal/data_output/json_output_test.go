@@ -1,4 +1,4 @@
-package internal
+package data_output
 
 import (
     "testing"
@@ -7,19 +7,21 @@ import (
     "net/http"
     "time"
 
-    "github.com/HiroyukiNakatsuma/canon-go/internal"
+    "github.com/HiroyukiNakatsuma/canon-go/internal/action"
+    "github.com/HiroyukiNakatsuma/canon-go/internal/data_output"
+    "github.com/HiroyukiNakatsuma/canon-go/internal/result"
     "github.com/HiroyukiNakatsuma/canon-go/test/mock"
 )
 
 func TestOutputReport(t *testing.T) {
     cases := map[string]struct {
-        actions              []internal.Action
+        actions              []action.Action
         expectHasError       bool
         expectedErrorMessage string
     }{
         "single request": {
-            actions: []internal.Action{
-                internal.NewRequest(
+            actions: []action.Action{
+                action.NewRequest(
                     http.MethodGet,
                     `http://example.com?greet="Hello World!"`,
                     ``,
@@ -30,19 +32,19 @@ func TestOutputReport(t *testing.T) {
             expectedErrorMessage: "",
         },
         "single sleep": {
-            actions:              []internal.Action{internal.NewSleep(5)},
+            actions:              []action.Action{action.NewSleep(5)},
             expectHasError:       false,
             expectedErrorMessage: "",
         },
         "request with sleep": {
-            actions: []internal.Action{
-                internal.NewRequest(
+            actions: []action.Action{
+                action.NewRequest(
                     http.MethodGet,
                     `http://example.com?greet="Hello World!"`,
                     ``,
                     nil,
                     mock.NewMockClient(30, nil)),
-                internal.NewSleep(5),
+                action.NewSleep(5),
             },
             expectHasError:       false,
             expectedErrorMessage: "",
@@ -51,7 +53,7 @@ func TestOutputReport(t *testing.T) {
 
     for name, c := range cases {
         t.Run(name, func(t *testing.T) {
-            internal.NewJsonOutput().OutputReport(c.actions)
+            data_output.NewJsonOutput().OutputReport(c.actions)
 
             if !existsReportFile() {
                 t.Errorf("not exists report file.")
@@ -64,19 +66,19 @@ func TestOutputReport(t *testing.T) {
 
 func TestSummarizeByAction(t *testing.T) {
     cases := map[string]struct {
-        actions                   []internal.Action
+        actions                   []action.Action
         expectLabel               []string
         expectResponseTimeAverage []string
         expectErrorRate           []string
     }{
         "simple requests": {
-            actions: []internal.Action{
-                &internal.Request{
+            actions: []action.Action{
+                &action.Request{
                     Method:  http.MethodGet,
                     Url:     "http://example.com",
                     Body:    "",
                     Headers: map[string]string{},
-                    Results: []*internal.Result{
+                    Results: []*result.Result{
                         {
                             StatusCode:   http.StatusOK,
                             ResponseBody: []byte("OK!"),
@@ -99,12 +101,12 @@ func TestSummarizeByAction(t *testing.T) {
                         },
                     },
                 },
-                &internal.Request{
+                &action.Request{
                     Method:  http.MethodPost,
                     Url:     "http://example.com",
                     Body:    `{"hoge":"fuga""}`,
                     Headers: map[string]string{},
-                    Results: []*internal.Result{
+                    Results: []*result.Result{
                         {
                             StatusCode:   http.StatusOK,
                             ResponseBody: []byte("OK!"),
@@ -132,13 +134,13 @@ func TestSummarizeByAction(t *testing.T) {
             },
         },
         "requests with sleep": {
-            actions: []internal.Action{
-                &internal.Request{
+            actions: []action.Action{
+                &action.Request{
                     Method:  http.MethodGet,
                     Url:     "http://example.com",
                     Body:    "",
                     Headers: map[string]string{},
-                    Results: []*internal.Result{
+                    Results: []*result.Result{
                         {
                             StatusCode:   http.StatusOK,
                             ResponseBody: []byte("OK!"),
@@ -161,13 +163,13 @@ func TestSummarizeByAction(t *testing.T) {
                         },
                     },
                 },
-                &internal.Sleep{Duration: 10},
-                &internal.Request{
+                &action.Sleep{Duration: 10},
+                &action.Request{
                     Method:  http.MethodPost,
                     Url:     "http://example.com",
                     Body:    `{"hoge":"fuga""}`,
                     Headers: map[string]string{},
-                    Results: []*internal.Result{
+                    Results: []*result.Result{
                         {
                             StatusCode:   http.StatusOK,
                             ResponseBody: []byte("OK!"),
@@ -198,7 +200,7 @@ func TestSummarizeByAction(t *testing.T) {
 
     for name, c := range cases {
         t.Run(name, func(t *testing.T) {
-            summaries := internal.NewJsonOutput().SummarizeByAction(c.actions)
+            summaries := data_output.NewJsonOutput().SummarizeByAction(c.actions)
             for i, summary := range summaries {
                 if summary.Label != c.expectLabel[i] {
                     t.Errorf("invalid summary Label.")

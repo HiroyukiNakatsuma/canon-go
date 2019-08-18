@@ -1,21 +1,21 @@
-package internal
+package action
 
 import (
     "testing"
     "net/http"
 
-    "github.com/HiroyukiNakatsuma/canon-go/internal"
+    "github.com/HiroyukiNakatsuma/canon-go/internal/action"
     "github.com/HiroyukiNakatsuma/canon-go/test/mock"
 )
 
 func TestDo(t *testing.T) {
     cases := map[string]struct {
-        Request              *internal.Request
+        Request              *action.Request
         expectHasError       bool
         expectedErrorMessage string
     }{
         "valid GET Request": {
-            Request: internal.NewRequest(
+            Request: action.NewRequest(
                 http.MethodGet,
                 `http://example.com?greet="Hello World!"`,
                 ``,
@@ -25,7 +25,7 @@ func TestDo(t *testing.T) {
             expectedErrorMessage: "",
         },
         "valid POST request": {
-            Request: internal.NewRequest(
+            Request: action.NewRequest(
                 http.MethodPost,
                 `http://example.com`,
                 `{"greet":"Hello World!"}`,
@@ -35,7 +35,7 @@ func TestDo(t *testing.T) {
             expectedErrorMessage: "",
         },
         "valid PUT request": {
-            Request: internal.NewRequest(
+            Request: action.NewRequest(
                 http.MethodPut,
                 `http://example.com`,
                 `{"greet":"Hello World!"}`,
@@ -45,7 +45,7 @@ func TestDo(t *testing.T) {
             expectedErrorMessage: "",
         },
         "valid DELETE request": {
-            Request: internal.NewRequest(
+            Request: action.NewRequest(
                 http.MethodDelete,
                 `http://example.com`,
                 `{"greet":"Hello World!"}`,

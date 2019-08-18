@@ -1,4 +1,4 @@
-package internal
+package data_input
 
 import (
     "testing"
@@ -7,14 +7,15 @@ import (
     "os"
     "time"
 
-    "github.com/HiroyukiNakatsuma/canon-go/internal"
+    "github.com/HiroyukiNakatsuma/canon-go/internal/action"
+    "github.com/HiroyukiNakatsuma/canon-go/internal/data_input"
 )
 
 func TestLoadActions(t *testing.T) {
     cases := map[string]struct {
         inputContent         []byte
         inputFilepath        string
-        expectActions        []internal.Action
+        expectActions        []action.Action
         expectHasError       bool
         expectedErrorMessage string
     }{
@@ -26,8 +27,8 @@ actions:
       url: http://example.com/
 `),
             inputFilepath: "./input.yml",
-            expectActions: []internal.Action{
-                &internal.Request{
+            expectActions: []action.Action{
+                &action.Request{
                     Method: "GET",
                     Url:    "http://example.com/",
                 },
@@ -42,9 +43,9 @@ actions:
   - sleep: 20
 `),
             inputFilepath: "./input.yml",
-            expectActions: []internal.Action{
-                &internal.Sleep{Duration: 10 * time.Second},
-                &internal.Sleep{Duration: 20 * time.Second},
+            expectActions: []action.Action{
+                &action.Sleep{Duration: 10 * time.Second},
+                &action.Sleep{Duration: 20 * time.Second},
             },
             expectHasError:       false,
             expectedErrorMessage: "",
@@ -58,8 +59,8 @@ actions:
       body: '{"hoge":1,"fuga":2}'
 `),
             inputFilepath: "./input.yml",
-            expectActions: []internal.Action{
-                &internal.Request{
+            expectActions: []action.Action{
+                &action.Request{
                     Method: "POST",
                     Url:    "http://example.com/",
                     Body:   `{"hoge":1,"fuga":2}`,
@@ -80,8 +81,8 @@ actions:
         Authorization: Bearer token
 `),
             inputFilepath: "./input.yml",
-            expectActions: []internal.Action{
-                &internal.Request{
+            expectActions: []action.Action{
+                &action.Request{
                     Method: "POST",
                     Url:    "http://example.com/",
                     Body:   `{"hoge":1,"fuga":2}`,
@@ -110,13 +111,13 @@ actions:
         Authorization: Bearer token
 `),
             inputFilepath: "./input.yml",
-            expectActions: []internal.Action{
-                &internal.Request{
+            expectActions: []action.Action{
+                &action.Request{
                     Method: "GET",
                     Url:    "http://example.com/",
                 },
-                &internal.Sleep{Duration: 10 * time.Second},
-                &internal.Request{
+                &action.Sleep{Duration: 10 * time.Second},
+                &action.Request{
                     Method: "POST",
                     Url:    "http://example.com/",
                     Body:   `{"hoge":1,"fuga":2}`,
@@ -141,8 +142,8 @@ actions:
         Accept: text/html
 `),
             inputFilepath: "./input.yml",
-            expectActions: []internal.Action{
-                &internal.Request{
+            expectActions: []action.Action{
+                &action.Request{
                     Method:  "POST",
                     Url:     "http://example.com/",
                     Body:    `{"hoge":1,"fuga":2}`,
@@ -206,7 +207,7 @@ actions:
                 log.Fatal(err)
             }
 
-            actions, err := internal.NewYamlLoader(c.inputFilepath).LoadActions()
+            actions, err := data_input.NewYamlLoader(c.inputFilepath).LoadActions()
 
             if err != nil && !c.expectHasError {
                 t.Errorf("must raise error")
@@ -215,10 +216,10 @@ actions:
                 t.Errorf("invalid error message")
             }
 
-            for i, action := range actions {
-                request, isRequest := action.(*internal.Request)
+            for i, act := range actions {
+                request, isRequest := act.(*action.Request)
                 if isRequest {
-                    expectRequest := c.expectActions[i].(*internal.Request)
+                    expectRequest := c.expectActions[i].(*action.Request)
                     if request.Method != expectRequest.Method {
                         t.Errorf("invalid method")
                     }
@@ -234,8 +235,8 @@ actions:
                         }
                     }
                 } else {
-                    sleep := action.(*internal.Sleep).Duration.Seconds()
-                    expectSleep := c.expectActions[i].(*internal.Sleep).Duration.Seconds()
+                    sleep := act.(*action.Sleep).Duration.Seconds()
+                    expectSleep := c.expectActions[i].(*action.Sleep).Duration.Seconds()
                     if sleep != expectSleep {
                         t.Errorf("invalid sleep duration")
                     }
