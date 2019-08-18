@@ -11,12 +11,12 @@ type Sleep struct {
 }
 
 func NewSleep(duration time.Duration) *Sleep {
-    return &Sleep{Duration: duration}
+    return &Sleep{Duration: duration * time.Second}
 }
 
 func (slp *Sleep) Do() {
     log.Printf("sleep started.")
-    time.Sleep(slp.Duration * time.Second)
+    time.Sleep(slp.Duration)
     log.Printf("sleep finished.")
 }
 
