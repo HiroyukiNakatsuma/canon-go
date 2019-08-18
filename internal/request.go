@@ -9,33 +9,31 @@ import (
 )
 
 type Request struct {
-    Method   string
-    Endpoint string
-    Body     string
-    Headers  map[string][]string
-    Client   *http.Client
-    Results  []*Result
+    Method  string
+    Url     string
+    Body    string
+    Headers map[string]string
+    Client  *http.Client
+    Results []*Result
 }
 
-func NewRequest(method string, endpoint string, body string, headers map[string][]string, client *http.Client) *Request {
+func NewRequest(method string, url string, body string, headers map[string]string, client *http.Client) *Request {
     return &Request{
-        Method:   method,
-        Endpoint: endpoint,
-        Body:     body,
-        Headers:  headers,
-        Client:   client,
+        Method:  method,
+        Url:     url,
+        Body:    body,
+        Headers: headers,
+        Client:  client,
     }
 }
 
 func (req *Request) Do() {
-    request, err := http.NewRequest(req.Method, req.Endpoint, bytes.NewBuffer([]byte(req.Body)))
+    request, err := http.NewRequest(req.Method, req.Url, bytes.NewBuffer([]byte(req.Body)))
     if err != nil {
         log.Fatal(err)
     }
-    for k, vs := range req.Headers {
-        for _, v := range vs {
-            request.Header.Add(k, v)
-        }
+    for k, v := range req.Headers {
+        request.Header.Add(k, v)
     }
 
     log.Printf("start request.")

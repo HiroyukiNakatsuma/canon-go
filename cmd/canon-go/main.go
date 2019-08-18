@@ -1,7 +1,13 @@
 package main
 
-import "github.com/HiroyukiNakatsuma/canon-go/internal"
+import (
+    "flag"
+
+    "github.com/HiroyukiNakatsuma/canon-go/internal"
+)
 
 func main() {
-    internal.NewExecutor(internal.NewYamlLoader(), internal.NewJsonOutput()).Execute()
+    var inputFilepath = flag.String("input", "./sample/input.yml", "input file path.")
+    flag.Parse()
+    internal.NewExecutor(internal.NewYamlLoader(*inputFilepath), internal.NewJsonOutput()).Execute()
 }
