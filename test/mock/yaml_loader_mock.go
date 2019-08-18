@@ -14,6 +14,6 @@ func (yamlLoader *YamlLoaderMock) LoadConfig() *internal.ActionConfig {
     return &internal.ActionConfig{Threads: 1, Loop: 1}
 }
 
-func (yamlLoader *YamlLoaderMock) LoadActions() []internal.Action {
-    return yamlLoader.actions
+func (yamlLoader *YamlLoaderMock) LoadActions() ([]internal.Action, error) {
+    return yamlLoader.actions, nil
 }

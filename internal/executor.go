@@ -1,5 +1,7 @@
 package internal
 
+import "log"
+
 type Executor struct {
     dataInput  DataInput
     dataOutput DataOutput
@@ -10,7 +12,10 @@ func NewExecutor(dataInput DataInput, dataOutput DataOutput) *Executor {
 }
 
 func (e *Executor) Execute() {
-    actions := e.dataInput.LoadActions()
+    actions, err := e.dataInput.LoadActions()
+    if err != nil {
+        log.Fatal(err)
+    }
 
     for _, action := range actions {
         action.Do()

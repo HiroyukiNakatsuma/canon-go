@@ -4,7 +4,6 @@ import (
     "net/http"
     "time"
     "log"
-    "fmt"
     "io/ioutil"
     "errors"
 
@@ -31,24 +30,25 @@ func (yamlLoader *yamlLoader) LoadConfig() *ActionConfig {
     return &ActionConfig{Threads: 1, Loop: 1}
 }
 
-func (yamlLoader *yamlLoader) LoadActions() []Action {
+func (yamlLoader *yamlLoader) LoadActions() ([]Action, error) {
     yamlInput, err := ioutil.ReadFile(yamlLoader.Filepath)
     if err != nil {
-        panic(err)
+        return nil, errors.New("invalid filepath")
     }
 
     input := input{}
     err = yaml.Unmarshal(yamlInput, &input)
     if err != nil {
         log.Fatal(err)
+        return nil, errors.New("invalid input")
     }
 
     actions, err := buildActions(&input)
     if err != nil {
-        log.Fatal(err)
+        return nil, err
     }
 
-    return actions
+    return actions, nil
 }
 
 func buildActions(input *input) (actions []Action, err error) {
@@ -64,24 +64,24 @@ func buildActions(input *input) (actions []Action, err error) {
                 actions = append(actions, req)
             case "sleep":
                 duration := time.Duration(v.(int))
-                actions = append(actions, NewSleep(duration*time.Second))
+                actions = append(actions, NewSleep(duration))
             default:
-                fmt.Printf("not much pattern..")
+                return nil, errors.New("invalid input")
             }
         }
     }
     return
 }
 
-func buildRequest(requestMap map[interface{}]interface{}, timeout time.Duration) (req *Request, error error) {
+func buildRequest(requestMap map[interface{}]interface{}, timeout time.Duration) (req *Request, err error) {
     method := requestMap["method"]
     url := requestMap["url"]
     body := requestMap["body"]
     if method == nil {
-        return nil, errors.New("method is required.")
+        return nil, errors.New("method is required")
     }
     if url == nil {
-        return nil, errors.New("url is required.")
+        return nil, errors.New("url is required")
     }
     if body == nil {
         body = ""
