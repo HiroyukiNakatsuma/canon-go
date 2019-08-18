@@ -1,0 +1,1 @@
+{"name":"Tile","summaries":[{"label":"GET http://example.com/?greet=\"Hello World!\"","responseTimeAverage":"0.42s","errorRate":"100%","details":[{"status":505,"responseTime":"0.417900s"}]},{"label":"POST http://example.com/","responseTimeAverage":"0.45s","errorRate":"0%","details":[{"status":200,"responseTime":"0.452684s"}]}]}
