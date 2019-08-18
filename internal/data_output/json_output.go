@@ -27,10 +27,15 @@ type detail struct {
     ResponseTime string `json:"responseTime"`
 }
 
-type jsonOutput struct{}
+type jsonOutput struct {
+    Filepath string
+}
 
-func NewJsonOutput() *jsonOutput {
-    return &jsonOutput{}
+func NewJsonOutput(filepath string) *jsonOutput {
+    if filepath == "" {
+        filepath = "./sample/output.json"
+    }
+    return &jsonOutput{Filepath: filepath}
 }
 
 func (output *jsonOutput) OutputReport(actions []action.Action) {
@@ -38,7 +43,7 @@ func (output *jsonOutput) OutputReport(actions []action.Action) {
     report := report{Name: "Tile", Summaries: summaries}
     bytes, _ := json.Marshal(report)
 
-    file, err := os.Create(`./report.json`)
+    file, err := os.Create(output.Filepath)
     if err != nil {
         log.Printf("output error!")
     }
