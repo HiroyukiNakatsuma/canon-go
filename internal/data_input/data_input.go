@@ -6,6 +6,6 @@ import (
 )
 
 type DataInput interface {
-    LoadConfig() *config.ActionConfig
+    LoadConfig() *config.Config
     LoadActions() ([]action.Action, error)
 }

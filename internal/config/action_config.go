@@ -1,6 +1,6 @@
 package config
 
-type ActionConfig struct {
+type Config struct {
     Threads int
     Loop    int
 }

@@ -29,8 +29,8 @@ func NewYamlLoader(filepath string) *yamlLoader {
     return &yamlLoader{Filepath: filepath}
 }
 
-func (yamlLoader *yamlLoader) LoadConfig() *config.ActionConfig {
-    return &config.ActionConfig{Threads: 1, Loop: 1}
+func (yamlLoader *yamlLoader) LoadConfig() *config.Config {
+    return &config.Config{Threads: 1, Loop: 1}
 }
 
 func (yamlLoader *yamlLoader) LoadActions() ([]action.Action, error) {
