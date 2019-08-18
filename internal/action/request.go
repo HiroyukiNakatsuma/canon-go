@@ -1,4 +1,4 @@
-package internal
+package action
 
 import (
     "net/http"
@@ -6,6 +6,8 @@ import (
     "bytes"
     "log"
     "io/ioutil"
+
+    "github.com/HiroyukiNakatsuma/canon-go/internal/result"
 )
 
 type Request struct {
@@ -14,7 +16,7 @@ type Request struct {
     Body    string
     Headers map[string]string
     Client  *http.Client
-    Results []*Result
+    Results []*result.Result
 }
 
 func NewRequest(method string, url string, body string, headers map[string]string, client *http.Client) *Request {
@@ -54,14 +56,14 @@ func (req *Request) Do() {
         log.Fatal(err)
     }
 
-    result := &Result{StatusCode: res.StatusCode, ResponseBody: b, ResponseTime: execTime}
+    rslt := &result.Result{StatusCode: res.StatusCode, ResponseBody: b, ResponseTime: execTime}
 
-    log.Printf("Response Status: %d", result.StatusCode)
-    log.Printf("Response Time: %fs", result.ResponseTime.Seconds())
+    log.Printf("Response Status: %d", rslt.StatusCode)
+    log.Printf("Response Time: %fs", rslt.ResponseTime.Seconds())
 
-    req.Results = append(req.Results, result)
+    req.Results = append(req.Results, rslt)
 }
 
-func (req *Request) GetResults() []*Result {
+func (req *Request) GetResults() []*result.Result {
     return req.Results
 }

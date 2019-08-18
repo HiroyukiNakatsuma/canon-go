@@ -5,37 +5,40 @@ import (
     "net/http"
 
     "github.com/HiroyukiNakatsuma/canon-go/internal"
+    "github.com/HiroyukiNakatsuma/canon-go/internal/action"
+    "github.com/HiroyukiNakatsuma/canon-go/internal/data_input"
+    "github.com/HiroyukiNakatsuma/canon-go/internal/data_output"
     "github.com/HiroyukiNakatsuma/canon-go/test/mock"
 )
 
 func TestExecute(t *testing.T) {
     cases := map[string]struct {
-        dataInput            internal.DataInput
-        dataOutput           internal.DataOutput
+        dataInput            data_input.DataInput
+        dataOutput           data_output.DataOutput
         expectHasError       bool
         expectedErrorMessage string
     }{
         "valid requests": {
             dataInput: mock.NewYamlLoaderMock(
-                internal.NewRequest(
+                action.NewRequest(
                     http.MethodGet,
                     `http://example.com?greet="Hello World!"`,
                     ``,
                     nil,
                     mock.NewMockClient(30, nil)),
-                internal.NewRequest(
+                action.NewRequest(
                     http.MethodPost,
                     `http://example.com`,
                     `{"greet":"Hello World!"}`,
                     nil,
                     mock.NewMockClient(30, nil)),
-                internal.NewRequest(
+                action.NewRequest(
                     http.MethodPut,
                     `http://example.com`,
                     `{"greet":"Hello World!"}`,
                     nil,
                     mock.NewMockClient(30, nil)),
-                internal.NewRequest(
+                action.NewRequest(
                     http.MethodDelete,
                     `http://example.com`,
                     `{"greet":"Hello World!"}`,
@@ -48,25 +51,25 @@ func TestExecute(t *testing.T) {
         },
         "valid requests with headers": {
             dataInput: mock.NewYamlLoaderMock(
-                internal.NewRequest(
+                action.NewRequest(
                     http.MethodGet,
                     `http://example.com?greet="Hello World!"`,
                     ``,
                     map[string]string{"content-type": "application/json", "Authorization": "Bearer tokenExample"},
                     mock.NewMockClient(30, nil)),
-                internal.NewRequest(
+                action.NewRequest(
                     http.MethodPost,
                     `http://example.com`,
                     `{"greet":"Hello World!"}`,
                     map[string]string{"content-type": "application/json", "Authorization": "Bearer tokenExample"},
                     mock.NewMockClient(30, nil)),
-                internal.NewRequest(
+                action.NewRequest(
                     http.MethodPut,
                     `http://example.com`,
                     `{"greet":"Hello World!"}`,
                     map[string]string{"content-type": "application/json", "Authorization": "Bearer tokenExample"},
                     mock.NewMockClient(30, nil)),
-                internal.NewRequest(
+                action.NewRequest(
                     http.MethodDelete,
                     `http://example.com`,
                     `{"greet":"Hello World!"}`,
@@ -79,28 +82,28 @@ func TestExecute(t *testing.T) {
         },
         "valid requests with sleep": {
             dataInput: mock.NewYamlLoaderMock(
-                internal.NewRequest(
+                action.NewRequest(
                     http.MethodGet,
                     `http://example.com?greet="Hello World!"`,
                     ``,
                     map[string]string{"content-type": "application/json", "Authorization": "Bearer tokenExample"},
                     mock.NewMockClient(30, nil)),
-                internal.NewSleep(5),
-                internal.NewRequest(
+                action.NewSleep(5),
+                action.NewRequest(
                     http.MethodPost,
                     `http://example.com`,
                     `{"greet":"Hello World!"}`,
                     map[string]string{"content-type": "application/json", "Authorization": "Bearer tokenExample"},
                     mock.NewMockClient(30, nil)),
-                internal.NewSleep(5),
-                internal.NewRequest(
+                action.NewSleep(5),
+                action.NewRequest(
                     http.MethodPut,
                     `http://example.com`,
                     `{"greet":"Hello World!"}`,
                     map[string]string{"content-type": "application/json", "Authorization": "Bearer tokenExample"},
                     mock.NewMockClient(30, nil)),
-                internal.NewSleep(5),
-                internal.NewRequest(
+                action.NewSleep(5),
+                action.NewRequest(
                     http.MethodDelete,
                     `http://example.com`,
                     `{"greet":"Hello World!"}`,

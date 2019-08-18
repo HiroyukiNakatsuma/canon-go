@@ -10,13 +10,13 @@ actions:
       url: http://example.com/
       body: '{"greet":"Hello World!"}'
       ###
-      # Multiple headers define like this:
-      # Accept: application/json,text/csv,application/xml
+      # Define Multiple contents header like this:
+      #   Accept: application/json,text/csv,application/xml
       #
       # not like this:
-      # Accept: application/json
-      # Accept: text/csv
-      # Accept: application/xml
+      #   Accept: application/json
+      #   Accept: text/csv
+      #   Accept: application/xml
       ###
       headers:
         Content-Type: application/json

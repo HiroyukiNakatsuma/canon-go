@@ -1,19 +1,22 @@
 package mock
 
-import "github.com/HiroyukiNakatsuma/canon-go/internal"
+import (
+    "github.com/HiroyukiNakatsuma/canon-go/internal/action"
+    "github.com/HiroyukiNakatsuma/canon-go/internal/config"
+)
 
 type YamlLoaderMock struct {
-    actions []internal.Action
+    actions []action.Action
 }
 
-func NewYamlLoaderMock(actions ...internal.Action) *YamlLoaderMock {
+func NewYamlLoaderMock(actions ...action.Action) *YamlLoaderMock {
     return &YamlLoaderMock{actions: actions}
 }
 
-func (yamlLoader *YamlLoaderMock) LoadConfig() *internal.ActionConfig {
-    return &internal.ActionConfig{Threads: 1, Loop: 1}
+func (yamlLoader *YamlLoaderMock) LoadConfig() *config.Config {
+    return &config.Config{Threads: 1, Loop: 1}
 }
 
-func (yamlLoader *YamlLoaderMock) LoadActions() ([]internal.Action, error) {
+func (yamlLoader *YamlLoaderMock) LoadActions() ([]action.Action, error) {
     return yamlLoader.actions, nil
 }
