@@ -14,7 +14,8 @@ import (
 )
 
 type yamlLoader struct {
-    Filepath string
+    actions []action.Action
+    config  *config.Config
 }
 
 type input struct {
@@ -22,19 +23,12 @@ type input struct {
     Actions []map[string]interface{}
 }
 
-func NewYamlLoader(filepath string) *yamlLoader {
+func NewYamlLoader(filepath string) (yl *yamlLoader, err error) {
     if filepath == "" {
         filepath = "./sample/input.yml"
     }
-    return &yamlLoader{Filepath: filepath}
-}
 
-func (yamlLoader *yamlLoader) LoadConfig() *config.Config {
-    return &config.Config{Threads: 1, Loop: 1}
-}
-
-func (yamlLoader *yamlLoader) LoadActions() ([]action.Action, error) {
-    yamlInput, err := ioutil.ReadFile(yamlLoader.Filepath)
+    yamlInput, err := ioutil.ReadFile(filepath)
     if err != nil {
         return nil, errors.New("invalid filepath")
     }
@@ -50,8 +44,15 @@ func (yamlLoader *yamlLoader) LoadActions() ([]action.Action, error) {
     if err != nil {
         return nil, err
     }
+    return &yamlLoader{actions: actions, config: &config.Config{Threads: 1, Loop: 1}}, err
+}
 
-    return actions, nil
+func (yamlLoader *yamlLoader) LoadConfig() *config.Config {
+    return yamlLoader.config
+}
+
+func (yamlLoader *yamlLoader) LoadActions() []action.Action {
+    return yamlLoader.actions
 }
 
 func buildActions(input *input) (actions []action.Action, err error) {

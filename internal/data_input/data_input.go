@@ -7,5 +7,5 @@ import (
 
 type DataInput interface {
     LoadConfig() *config.Config
-    LoadActions() ([]action.Action, error)
+    LoadActions() []action.Action
 }

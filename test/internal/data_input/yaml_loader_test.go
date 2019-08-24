@@ -207,7 +207,7 @@ actions:
                 log.Fatal(err)
             }
 
-            actions, err := data_input.NewYamlLoader(c.inputFilepath).LoadActions()
+            input, err := data_input.NewYamlLoader(c.inputFilepath)
 
             if err != nil && !c.expectHasError {
                 t.Errorf("must raise error")
@@ -216,29 +216,31 @@ actions:
                 t.Errorf("invalid error message")
             }
 
-            for i, act := range actions {
-                request, isRequest := act.(*action.Request)
-                if isRequest {
-                    expectRequest := c.expectActions[i].(*action.Request)
-                    if request.Method != expectRequest.Method {
-                        t.Errorf("invalid method")
-                    }
-                    if request.Url != expectRequest.Url {
-                        t.Errorf("invalid method")
-                    }
-                    if request.Body != expectRequest.Body {
-                        t.Errorf("invalid method")
-                    }
-                    for k, v := range request.Headers {
-                        if v != expectRequest.Headers[k] {
-                            t.Errorf("invalid header")
+            if err == nil {
+                for i, act := range input.LoadActions() {
+                    request, isRequest := act.(*action.Request)
+                    if isRequest {
+                        expectRequest := c.expectActions[i].(*action.Request)
+                        if request.Method != expectRequest.Method {
+                            t.Errorf("invalid method")
                         }
-                    }
-                } else {
-                    sleep := act.(*action.Sleep).Duration.Seconds()
-                    expectSleep := c.expectActions[i].(*action.Sleep).Duration.Seconds()
-                    if sleep != expectSleep {
-                        t.Errorf("invalid sleep duration")
+                        if request.Url != expectRequest.Url {
+                            t.Errorf("invalid method")
+                        }
+                        if request.Body != expectRequest.Body {
+                            t.Errorf("invalid method")
+                        }
+                        for k, v := range request.Headers {
+                            if v != expectRequest.Headers[k] {
+                                t.Errorf("invalid header")
+                            }
+                        }
+                    } else {
+                        sleep := act.(*action.Sleep).Duration.Seconds()
+                        expectSleep := c.expectActions[i].(*action.Sleep).Duration.Seconds()
+                        if sleep != expectSleep {
+                            t.Errorf("invalid sleep duration")
+                        }
                     }
                 }
             }

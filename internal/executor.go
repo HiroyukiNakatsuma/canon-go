@@ -1,8 +1,6 @@
 package internal
 
 import (
-    "log"
-
     "github.com/HiroyukiNakatsuma/canon-go/internal/data_input"
     "github.com/HiroyukiNakatsuma/canon-go/internal/data_output"
 )
@@ -17,14 +15,9 @@ func NewExecutor(dataInput data_input.DataInput, dataOutput data_output.DataOutp
 }
 
 func (e *Executor) Execute() {
-    actions, err := e.dataInput.LoadActions()
-    if err != nil {
-        log.Fatal(err)
-    }
-
+    actions := e.dataInput.LoadActions()
     for _, action := range actions {
         action.Do()
     }
-
     e.dataOutput.OutputReport(actions)
 }
