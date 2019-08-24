@@ -18,5 +18,11 @@ func main() {
     if err != nil {
         log.Fatal(err)
     }
-    internal.NewExecutor(input, data_output.NewJsonOutput(*outputFilepath)).Execute()
+
+    output, err := data_output.NewJsonOutput(*outputFilepath)
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    internal.NewExecutor(input, output).Execute()
 }

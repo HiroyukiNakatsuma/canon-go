@@ -4,7 +4,8 @@ import (
     "fmt"
     "log"
     "encoding/json"
-    "os"
+    "io/ioutil"
+    "errors"
 
     "github.com/HiroyukiNakatsuma/canon-go/internal/action"
     "github.com/HiroyukiNakatsuma/canon-go/internal/result"
@@ -28,14 +29,16 @@ type detail struct {
 }
 
 type jsonOutput struct {
-    Filepath string
+    filepath string
 }
 
-func NewJsonOutput(filepath string) *jsonOutput {
-    if filepath == "" {
-        filepath = "./sample/output.json"
+func NewJsonOutput(filepath string) (output *jsonOutput, err error) {
+    err = ioutil.WriteFile(filepath, []byte{}, 0644)
+    if err != nil {
+        return nil, errors.New("invalid output filepath")
     }
-    return &jsonOutput{Filepath: filepath}
+
+    return &jsonOutput{filepath: filepath}, nil
 }
 
 func (output *jsonOutput) OutputReport(actions []action.Action) {
@@ -43,13 +46,10 @@ func (output *jsonOutput) OutputReport(actions []action.Action) {
     report := report{Name: "Tile", Summaries: summaries}
     bytes, _ := json.Marshal(report)
 
-    file, err := os.Create(output.Filepath)
+    err := ioutil.WriteFile(output.filepath, bytes, 0644)
     if err != nil {
-        log.Printf("output error!")
+        log.Fatalf("output error!")
     }
-    defer file.Close()
-
-    file.Write(bytes)
 }
 
 func (output *jsonOutput) SummarizeByAction(actions []action.Action) (summaries []*summary) {

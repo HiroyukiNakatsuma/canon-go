@@ -13,6 +13,41 @@ import (
     "github.com/HiroyukiNakatsuma/canon-go/test/mock"
 )
 
+func TestNewJsonOutput(t *testing.T) {
+    cases := map[string]struct {
+        outputFilepath     string
+        expectHasError     bool
+        expectErrorMessage string
+    }{
+        "valid filepath": {
+            outputFilepath:     "./report.json",
+            expectHasError:     false,
+            expectErrorMessage: "",
+        },
+        "invalid filepath": {
+            outputFilepath:     "./hoge/fuga.json",
+            expectHasError:     true,
+            expectErrorMessage: "invalid output filepath",
+        },
+    }
+
+    for name, c := range cases {
+        t.Run(name, func(t *testing.T) {
+            _, err := data_output.NewJsonOutput(c.outputFilepath)
+
+            if c.expectHasError && err == nil {
+                t.Errorf("fail validation")
+            }
+            if err != nil && c.expectErrorMessage != err.Error() {
+                t.Errorf("invalid error message")
+            }
+            if err == nil {
+                CleanResultFile(c.outputFilepath)
+            }
+        })
+    }
+}
+
 func TestOutputReport(t *testing.T) {
     cases := map[string]struct {
         actions        []action.Action
@@ -65,7 +100,8 @@ func TestOutputReport(t *testing.T) {
 
     for name, c := range cases {
         t.Run(name, func(t *testing.T) {
-            data_output.NewJsonOutput("./output.json").OutputReport(c.actions)
+            output, _ := data_output.NewJsonOutput("./output.json")
+            output.OutputReport(c.actions)
 
             if !c.expectHasError && !existsReportFile(c.outputFilepath) {
                 t.Errorf("not exists report file.")
@@ -212,8 +248,8 @@ func TestSummarizeByAction(t *testing.T) {
 
     for name, c := range cases {
         t.Run(name, func(t *testing.T) {
-            summaries := data_output.NewJsonOutput("./output.json").SummarizeByAction(c.actions)
-            for i, summary := range summaries {
+            output, _ := data_output.NewJsonOutput("./output.json")
+            for i, summary := range output.SummarizeByAction(c.actions) {
                 if summary.Label != c.expectLabel[i] {
                     t.Errorf("invalid summary Label.")
                 }
@@ -225,6 +261,9 @@ func TestSummarizeByAction(t *testing.T) {
                 if summary.ErrorRate != c.expectErrorRate[i] {
                     t.Errorf("invalid summary ErrorRate.")
                 }
+            }
+            if existsReportFile("./output.json") {
+                CleanResultFile("./output.json")
             }
         })
     }
