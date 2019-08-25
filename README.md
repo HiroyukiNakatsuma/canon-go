@@ -23,6 +23,7 @@ go get -u github.com/HiroyukiNakatsuma/canon-go
 ### Define test scenario
 - Define test scenario in YAML format
 ```
+loop: 3   # number of execution actions
 timeout: 30
 actions:   # Choose "request" or "sleep"
   - request:
