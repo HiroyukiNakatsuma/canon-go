@@ -19,6 +19,7 @@ type yamlLoader struct {
 }
 
 type input struct {
+    Loop    int
     Timeout time.Duration
     Actions []map[string]interface{}
 }
@@ -44,7 +45,11 @@ func NewYamlLoader(filepath string) (yl *yamlLoader, err error) {
     if err != nil {
         return nil, err
     }
-    return &yamlLoader{actions: actions, config: &config.Config{Threads: 1, Loop: 1}}, err
+
+    if input.Loop < 1 {
+        input.Loop = 1
+    }
+    return &yamlLoader{actions: actions, config: &config.Config{Threads: 1, Loop: input.Loop}}, err
 }
 
 func (yamlLoader *yamlLoader) LoadConfig() *config.Config {

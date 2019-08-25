@@ -17,6 +17,6 @@ func (yamlLoader *YamlLoaderMock) LoadConfig() *config.Config {
     return &config.Config{Threads: 1, Loop: 1}
 }
 
-func (yamlLoader *YamlLoaderMock) LoadActions() ([]action.Action, error) {
-    return yamlLoader.actions, nil
+func (yamlLoader *YamlLoaderMock) LoadActions() []action.Action {
+    return yamlLoader.actions
 }

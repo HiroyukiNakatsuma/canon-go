@@ -1,6 +1,8 @@
 package internal
 
 import (
+    "log"
+
     "github.com/HiroyukiNakatsuma/canon-go/internal/data_input"
     "github.com/HiroyukiNakatsuma/canon-go/internal/data_output"
 )
@@ -16,8 +18,13 @@ func NewExecutor(dataInput data_input.DataInput, dataOutput data_output.DataOutp
 
 func (e *Executor) Execute() {
     actions := e.dataInput.LoadActions()
-    for _, action := range actions {
-        action.Do()
+    config := e.dataInput.LoadConfig()
+
+    for i := 1; i <= config.Loop; i++ {
+        log.Printf("start loop %dth.", i)
+        for _, action := range actions {
+            action.Do()
+        }
     }
     e.dataOutput.OutputReport(actions)
 }

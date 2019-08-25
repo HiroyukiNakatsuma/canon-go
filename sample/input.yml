@@ -1,3 +1,4 @@
+loop: 3   # number of execution actions
 timeout: 30   # HTTP connection time
 actions:   # Choose "request" or "sleep"
   - request:
