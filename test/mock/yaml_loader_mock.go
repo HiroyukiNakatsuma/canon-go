@@ -7,10 +7,11 @@ import (
 
 type YamlLoaderMock struct {
     actions []action.Action
+    config  *config.Config
 }
 
-func NewYamlLoaderMock(actions ...action.Action) *YamlLoaderMock {
-    return &YamlLoaderMock{actions: actions}
+func NewYamlLoaderMock(config *config.Config, actions ...action.Action) *YamlLoaderMock {
+    return &YamlLoaderMock{config: config, actions: actions}
 }
 
 func (yamlLoader *YamlLoaderMock) LoadConfig() *config.Config {

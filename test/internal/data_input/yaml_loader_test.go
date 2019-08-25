@@ -290,7 +290,7 @@ loop: -1
             expectErrorMessage: "",
         },
         "no loop": {
-            inputContent: []byte(``),
+            inputContent:       []byte(``),
             inputFilepath:      "./input.yml",
             expectConfig:       config.Config{Threads: 1, Loop: 1},
             expectHasError:     false,
