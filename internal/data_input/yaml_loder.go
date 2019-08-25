@@ -14,27 +14,22 @@ import (
 )
 
 type yamlLoader struct {
-    Filepath string
+    actions []action.Action
+    config  *config.Config
 }
 
 type input struct {
+    Loop    int
     Timeout time.Duration
     Actions []map[string]interface{}
 }
 
-func NewYamlLoader(filepath string) *yamlLoader {
+func NewYamlLoader(filepath string) (yl *yamlLoader, err error) {
     if filepath == "" {
         filepath = "./sample/input.yml"
     }
-    return &yamlLoader{Filepath: filepath}
-}
 
-func (yamlLoader *yamlLoader) LoadConfig() *config.Config {
-    return &config.Config{Threads: 1, Loop: 1}
-}
-
-func (yamlLoader *yamlLoader) LoadActions() ([]action.Action, error) {
-    yamlInput, err := ioutil.ReadFile(yamlLoader.Filepath)
+    yamlInput, err := ioutil.ReadFile(filepath)
     if err != nil {
         return nil, errors.New("invalid filepath")
     }
@@ -51,7 +46,18 @@ func (yamlLoader *yamlLoader) LoadActions() ([]action.Action, error) {
         return nil, err
     }
 
-    return actions, nil
+    if input.Loop < 1 {
+        input.Loop = 1
+    }
+    return &yamlLoader{actions: actions, config: &config.Config{Threads: 1, Loop: input.Loop}}, err
+}
+
+func (yamlLoader *yamlLoader) LoadConfig() *config.Config {
+    return yamlLoader.config
+}
+
+func (yamlLoader *yamlLoader) LoadActions() []action.Action {
+    return yamlLoader.actions
 }
 
 func buildActions(input *input) (actions []action.Action, err error) {

@@ -17,14 +17,14 @@ func NewExecutor(dataInput data_input.DataInput, dataOutput data_output.DataOutp
 }
 
 func (e *Executor) Execute() {
-    actions, err := e.dataInput.LoadActions()
-    if err != nil {
-        log.Fatal(err)
-    }
+    actions := e.dataInput.LoadActions()
+    config := e.dataInput.LoadConfig()
 
-    for _, action := range actions {
-        action.Do()
+    for i := 1; i <= config.Loop; i++ {
+        log.Printf("start loop %dth.", i)
+        for _, action := range actions {
+            action.Do()
+        }
     }
-
     e.dataOutput.OutputReport(actions)
 }
